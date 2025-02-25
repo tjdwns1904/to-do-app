@@ -1,12 +1,12 @@
 import React, { useEffect, useState } from "react";
-import Header from "../Registered/Header";
+import Header from "@/components/Registered/Header";
 import axios from "axios";
-import TaskCard from "./TaskCard";
-import AddTask from "./AddTask";
-import TaskDetail from "./TaskDetail";
+import TaskCard from "@/components/Registered/Task/ViewTask/TaskCard";
+import AddTask from "@/components/Registered/Task/AddTask/AddTask";
+import TaskDetail from "@/components/Registered/Task/ViewTask/TaskDetail";
 import LoadingPage from "../LoadingPage";
-import DeleteConfirm from "../../components/Registered/Task/DeleteTask/DeleteConfirm";
-import EmptyPage from "../../components/Registered/Task/ViewTask/EmptyPage";
+import DeleteConfirm from "@/components/Registered/Task/DeleteTask/DeleteConfirm";
+import EmptyPage from "../EmptyPage";
 
 function Inbox({ user, tags, getTags, projects, getProjects }) {
     const [tasks, setTasks] = useState([]);

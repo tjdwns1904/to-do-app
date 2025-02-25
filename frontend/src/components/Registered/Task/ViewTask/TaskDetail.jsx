@@ -1,8 +1,8 @@
 import React, { useEffect, useRef, useState } from "react";
 import { Form } from 'react-bootstrap';
-import AddForm from "./AddForm";
+import AddForm from "@/components/Registered/Form/AddForm";
 import axios from "axios";
-import LoadingPage from "../../../Common/LoadingPage";
+import LoadingPage from "@/pages/LoadingPage";
 
 function TaskDetail({ user, selectedTask, handleClose, getTasks, getTags, getProjects, tags, projects }) {
     const [task, setTask] = useState({ ...selectedTask, tags: JSON.parse(selectedTask.tags) });

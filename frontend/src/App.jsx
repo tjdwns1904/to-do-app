@@ -1,16 +1,15 @@
 import './App.css'
 import { BrowserRouter, Route, Routes } from 'react-router-dom'
-import Home from './Unregistered/Home'
-import Today from './Registered/Today'
-import Upcoming from './Registered/Upcoming'
-import Signup from './Signup'
-import Login from './Login'
+import Home from './pages/Home/index'
+import Today from './pages/Today/index'
+import Upcoming from './pages/Upcoming/index'
+import Signup from './pages/Signup/index'
+import Login from './pages/Login/index'
 import { useEffect, useState } from 'react'
-import Inbox from './Registered/Inbox';
+import Inbox from './pages/Inbox/index';
 import axios from 'axios';
-import FilteredTask from './Registered/FilteredTask';
-import LoadingPage from './LoadingPage'
-import NotFound from './NotFound';
+import LoadingPage from './pages/LoadingPage'
+import NotFound from './pages/NotFound';
 
 function App() {
   axios.defaults.withCredentials = true;

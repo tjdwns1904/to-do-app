@@ -1,7 +1,7 @@
 import axios from "axios";
 import React, { useState } from "react";
 import { Form } from "react-bootstrap";
-import LoadingPage from "../../Common/LoadingPage";
+import LoadingPage from "@/pages/LoadingPage";
 
 function AddForm({ type, user, getTags, getProjects, handleClose }) {
     const [ name, setName ] = useState("");

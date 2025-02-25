@@ -1,12 +1,11 @@
-import React from "react";
-import logo from '../assets/logo.jpg';
+import IMAGES from "@/assets/images/images";
 
 function Footer() {
     return (
         <div className="footer-container">
             <div>
                 <div className="logo-name">
-                    <img className="logo" src={logo} alt="" />
+                    <img className="logo" src={IMAGES.logo} alt="" />
                     <h2>TodoList</h2>
                 </div>
                 <p>Join millions of people who organize<br /> work and life with Todoist.</p>

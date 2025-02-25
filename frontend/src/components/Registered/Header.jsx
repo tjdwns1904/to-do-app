@@ -1,10 +1,10 @@
 import React, { useEffect, useState } from "react";
 import { Link, NavLink } from "react-router-dom";
-import profile from '../assets/user.png';
-import CustomContextMenu from "./CustomContextMenu";
+import profile from '@/assets/images/user.png';
+import CustomContextMenu from "./ContextMenu/CustomContextMenu";
 import axios from "axios";
 import DeleteConfirm from "./Task/DeleteTask/DeleteConfirm";
-import LoadingPage from "../Common/LoadingPage";
+import LoadingPage from "@/pages/LoadingPage";
 
 function Header({ user, tags, projects, getProjects, getTags, isMenuShown, setIsMenuShown }) {
     const [point, setPoint] = useState({

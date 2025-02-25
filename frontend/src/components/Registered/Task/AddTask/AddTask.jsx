@@ -1,8 +1,8 @@
 import axios from "axios";
 import React, { useEffect, useRef, useState } from "react";
 import { Form } from "react-bootstrap";
-import AddForm from "./AddForm";
-import LoadingPage from "../../../Common/LoadingPage";
+import AddForm from "@/components/Registered/Form/AddForm";
+import LoadingPage from "@/pages/LoadingPage";
 
 function AddTask({ user, handleClose, getTasks, getTags, getProjects, tags, projects }) {
     const time = useRef("");

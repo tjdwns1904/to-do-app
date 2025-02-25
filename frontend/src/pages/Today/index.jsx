@@ -1,11 +1,11 @@
 import React, { useEffect, useState } from "react";
-import Header from "../Header";
+import Header from "@/components/Common/Header";
 import axios from "axios";
-import TaskCard from "../TaskCard";
-import AddTask from "../AddTask";
-import TaskDetail from "../TaskDetail";
-import LoadingPage from "../../components/Common/LoadingPage";
-import DeleteConfirm from "../DeleteConfirm";
+import TaskCard from "@/components/Registered/Task/ViewTask/TaskCard";
+import AddTask from "@/components/Registered/Task/AddTask/AddTask";
+import TaskDetail from "@/components/Registered/Task/ViewTask/TaskDetail";
+import LoadingPage from "../LoadingPage";
+import DeleteConfirm from "@/components/Registered/Task/DeleteTask/DeleteConfirm";
 import EmptyPage from "../EmptyPage";
 import Calendar from "./_components/Calendar";
 

@@ -1,12 +1,9 @@
-import React, { useEffect, useState } from "react";
-import Header from "../../components/Common/Header";
+import { useEffect, useState } from "react";
+import Header from "@/components/Common/Header";
 import { Button } from 'react-bootstrap';
 import { Link } from "react-router-dom";
-import Footer from "../../components/Common/Footer";
-import scr1 from '../assets/scr1.png';
-import scr2 from '../assets/scr2.png';
-import scr3 from '../assets/scr3.png';
-import main from '../assets/scr0.png';
+import Footer from "@/components/Common/Footer";
+import IMAGES from "@/assets/images/images";
 
 
 function Home() {
@@ -29,13 +26,13 @@ function Home() {
     useEffect(() => {
         handleScroll();
         if (scrollY >= 2200) {
-            setImage(scr3);
+            setImage(IMAGES.screenshot1);
         }
         if (scrollY < 1700) {
-            setImage(scr1);
+            setImage(IMAGES.screenshot2);
         }
         if (scrollY >= 1700 && scrollY < 2200) {
-            setImage(scr2);
+            setImage(IMAGES.screenshot3);
         }
         if (scrollY <= 2800) {
             setActive("first");
@@ -62,7 +59,7 @@ function Home() {
                         <p className="text-secondary section-subtitle">Become focused, organized, and calm with TodoList. The world’s #1 task manager and to-do list app.</p>
                         <Link to={'/login'}><Button variant="danger" className="btn">Get Started</Button></Link>
                     </div>
-                    <img src={main} alt="" className="main-pic" style={{'--margin': margin + "px"}}/>
+                    <img src={IMAGES.screenshot1} alt="" className="main-pic" style={{'--margin': margin + "px"}}/>
                 </div>
                 <div className="section-container">
                     <p>30 million+ people and teams trust their sanity and productivity to TodoList</p>
@@ -98,7 +95,7 @@ function Home() {
                     </div>
                     <p className="level text-muted">Simple</p>
                     <div className="row function-detail">
-                        <img src={(active === "fourth" || active === "third") ? scr3 : scr1} alt="" className="img-container2 col-sm-4" />
+                        <img src={(active === "fourth" || active === "third") ? IMAGES.screenshot4 : IMAGES.screenshot2} alt="" className="img-container2 col-sm-4" />
                         <div className="col-sm-2 progress-bar">
                             <div className="vr-line" />
                             <div className={"red-line " + active + "-line"} />

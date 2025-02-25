@@ -1,9 +1,9 @@
 import React, { useState } from "react";
-import Header from "../../components/Common/Header";
+import Header from "@/components/Common/Header";
 import { Button, Form } from "react-bootstrap";
 import { Link } from "react-router-dom";
-import Footer from "../../components/Common/Footer";
-import fb from './assets/fb.png';
+import Footer from "@/components/Common/Footer";
+import fb from '@/assets/images/fb.png';
 
 
 function Signup() {
