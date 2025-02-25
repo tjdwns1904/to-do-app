@@ -1,10 +1,17 @@
-import React, { useEffect, useRef, useState } from "react";
+import { ChangeEvent, MouseEvent, useEffect, useRef, useState } from "react";
 import { Form } from 'react-bootstrap';
 import AddForm from "@/components/Registered/Form/AddForm";
 import axios from "axios";
 import LoadingPage from "@/pages/LoadingPage";
+import { Project, Tag, Task, User } from "@/types/common";
 
-function TaskDetail({ user, selectedTask, handleClose, getTasks, getTags, getProjects, tags, projects }) {
+function TaskDetail({ user, selectedTask, handleClose, getTasks, getTags, getProjects, tags, projects }
+    : {
+        user: User,
+        selectedTask: Task,
+        tags: Tag[],
+        projects: Project[]
+    }) {
     const [task, setTask] = useState({ ...selectedTask, tags: JSON.parse(selectedTask.tags) });
     const [isValid, setIsValid] = useState(true);
     const [isLoading, setIsLoading] = useState(false);
@@ -12,8 +19,8 @@ function TaskDetail({ user, selectedTask, handleClose, getTasks, getTags, getPro
     const [isAddModalShown, setIsAddModalShown] = useState(false);
     const date = useRef(task.date);
     const time = useRef(task.time);
-    const addTag = (e) => {
-        const { id } = e.target;
+    const addTag = (e: MouseEvent<HTMLParagraphElement>) => {
+        const { id } = e.currentTarget;
         if (task.tags) {
             if (!task.tags.includes(id)) {
                 setTask({ ...task, tags: [...task.tags, id] });
@@ -23,7 +30,15 @@ function TaskDetail({ user, selectedTask, handleClose, getTasks, getTags, getPro
             setTask({ ...task, tags: newTags });
         }
     }
-    const handleChange = (e) => {
+    
+    const deleteTag = (e: MouseEvent<HTMLButtonElement>) => {
+        const { id } = e.currentTarget;
+        const newTags = task.tags.filter((tag: string) => {
+            return tag !== id;
+        });
+        setTask({ ...task, tags: newTags });
+    }
+    const handleChange = (e: ChangeEvent<HTMLInputElement>) => {
         const { name, value } = e.target;
         setTask(prev => {
             return (
@@ -34,8 +49,8 @@ function TaskDetail({ user, selectedTask, handleClose, getTasks, getTags, getPro
             )
         });
     };
-    const handleSelect = (e) => {
-        const { id } = e.target;
+    const handleSelect = (e: MouseEvent<HTMLButtonElement>) => {
+        const { id } = e.currentTarget;
         if (id !== selected) { setSelected(id); }
         else {
             handleSelectionClose();
@@ -45,11 +60,11 @@ function TaskDetail({ user, selectedTask, handleClose, getTasks, getTags, getPro
         setSelected("");
     }
     const handleOk = () => {
-        setTask({ ...task, date: date.current, time: time.current});
+        setTask({ ...task, date: date.current, time: time.current });
         handleSelectionClose();
     }
     const updateTask = () => {
-        if (task.title !== "" && task.due !== "") {
+        if (task.title !== "") {
             setIsValid(true);
             setIsLoading(true);
             if (task.tags) {
@@ -97,8 +112,8 @@ function TaskDetail({ user, selectedTask, handleClose, getTasks, getTags, getPro
     };
     const handleAddModalShow = () => setIsAddModalShown(true);
     const handleAddModalClose = () => setIsAddModalShown(false);
-    const setProject = (e) => {
-        const { id } = e.target;
+    const setProject = (e: MouseEvent<HTMLParagraphElement>) => {
+        const { id } = e.currentTarget;
         setTask({ ...task, project: id });
     }
     const removeProject = () => setTask({ ...task, project: "" });
@@ -128,7 +143,7 @@ function TaskDetail({ user, selectedTask, handleClose, getTasks, getTags, getPro
                                     }} />
                                 </div>
                             }
-                            {(task.tags && task.tags.length !== 0) && task.tags.map(tag => {
+                            {(task.tags && task.tags.length !== 0) && task.tags.map((tag: string) => {
                                 return (
                                     <div key={tag} className="task-tags-container">
                                         <p>{tag}</p>

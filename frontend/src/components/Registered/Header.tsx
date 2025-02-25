@@ -1,12 +1,19 @@
-import React, { useEffect, useState } from "react";
-import { Link, NavLink } from "react-router-dom";
-import profile from '@/assets/images/user.png';
+import { useEffect, useState } from "react";
+import { NavLink } from "react-router-dom";
+import IMAGES from "@/assets/images/images";
 import CustomContextMenu from "./ContextMenu/CustomContextMenu";
 import axios from "axios";
 import DeleteConfirm from "./Task/DeleteTask/DeleteConfirm";
 import LoadingPage from "@/pages/LoadingPage";
+import { Project, Tag, User } from "@/types/common";
 
-function Header({ user, tags, projects, getProjects, getTags, isMenuShown, setIsMenuShown }) {
+function Header({ user, tags, projects, getProjects, getTags, isMenuShown, setIsMenuShown }
+    :
+    {
+        user: User,
+        tags: Tag[],
+        projects: Project[]
+    }) {
     const [point, setPoint] = useState({
         x: 0,
         y: 0
@@ -15,10 +22,10 @@ function Header({ user, tags, projects, getProjects, getTags, isMenuShown, setIs
         type: "",
         name: ""
     });
-    const [ isProjectCollapsed, setIsProjectCollapsed ] = useState(false);
-    const [ isTagCollapsed, setIsTagCollapsed ] = useState(false);
+    const [isProjectCollapsed, setIsProjectCollapsed] = useState(false);
+    const [isTagCollapsed, setIsTagCollapsed] = useState(false);
     const [isShown, setIsShown] = useState(false);
-    const [ isLoading, setIsLoading ] = useState(false);
+    const [isLoading, setIsLoading] = useState(false);
     const handleShow = () => setIsShown(true);
     const handleClose = () => setIsShown(false);
     const handleProjectToggle = () => setIsProjectCollapsed(prev => !prev);
@@ -40,7 +47,7 @@ function Header({ user, tags, projects, getProjects, getTags, isMenuShown, setIs
     }
     const handleDelete = () => {
         setIsLoading(true);
-        if(selected.type === "tag"){
+        if (selected.type === "tag") {
             axios.post("http://localhost:3000/tag/delete", {
                 userId: user.id,
                 tag: selected.name
@@ -58,7 +65,7 @@ function Header({ user, tags, projects, getProjects, getTags, isMenuShown, setIs
                     setIsMenuShown(false);
                     handleClose();
                 })
-        }else {
+        } else {
             axios.post("http://localhost:3000/project/delete", {
                 userId: user.id,
                 project: selected.name
@@ -86,12 +93,12 @@ function Header({ user, tags, projects, getProjects, getTags, isMenuShown, setIs
 
     return (
         <>
-            {isLoading && <LoadingPage/>}
-            {isShown && <DeleteConfirm handleClose={handleClose} handleDelete={handleDelete} type={selected.type}/>}
+            {isLoading && <LoadingPage />}
+            {isShown && <DeleteConfirm handleClose={handleClose} handleDelete={handleDelete} type={selected.type} />}
             <div className="user-header-container" onClick={() => setIsMenuShown(false)}>
                 <div>
                     <div className="profile-container">
-                        <img src={profile} alt="" />
+                        <img src={IMAGES.profile} alt="" />
                         <p>{user.username}</p>
                     </div>
                     <NavLink to={'/'} className={({ isActive }) => (isActive) ? "active header-link inbox-link" : "header-link inbox-link"}>Inbox</NavLink>
@@ -100,7 +107,7 @@ function Header({ user, tags, projects, getProjects, getTags, isMenuShown, setIs
                     {projects.length !== 0 &&
                         <div className="list-container">
                             <p className="list-title" onClick={handleProjectToggle}>Projects</p>
-                            <div className={isProjectCollapsed ? "list-shown" : "list-hidden"} onClick={handleProjectToggle}/>
+                            <div className={isProjectCollapsed ? "list-shown" : "list-hidden"} onClick={handleProjectToggle} />
                             {isProjectCollapsed && projects.map(project => {
                                 return (
                                     <NavLink key={project.id} to={'/filter/project/' + project.name} className={({ isActive }) => (isActive) ? "active sub-list-link list-item" : "sub-list-link list-item"}
@@ -120,7 +127,7 @@ function Header({ user, tags, projects, getProjects, getTags, isMenuShown, setIs
                     {tags.length !== 0 &&
                         <div className="list-container">
                             <p className="list-title" onClick={handleTagToggle}>Tags</p>
-                            <div className={isTagCollapsed ? "list-shown" : "list-hidden"} onClick={handleTagToggle}/>
+                            <div className={isTagCollapsed ? "list-shown" : "list-hidden"} onClick={handleTagToggle} />
                             {isTagCollapsed && tags.map(tag => {
                                 return (
                                     <NavLink key={tag.id} to={'/filter/tag/' + tag.name} className={({ isActive }) => (isActive) ? "active sub-list-link list-item" : "sub-list-link list-item"}

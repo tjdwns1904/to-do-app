@@ -1,27 +1,43 @@
 import axios from "axios";
-import React, { useEffect, useRef, useState } from "react";
+import { MouseEvent, ChangeEvent, useEffect, useRef, useState } from "react";
 import { Form } from "react-bootstrap";
 import AddForm from "@/components/Registered/Form/AddForm";
 import LoadingPage from "@/pages/LoadingPage";
+import { Project, Tag, User } from "@/types/common";
 
-function AddTask({ user, handleClose, getTasks, getTags, getProjects, tags, projects }) {
+interface TaskFormContent {
+    title: string;
+    description: string;
+    time: string;
+    date: string | null;
+    project: string;
+}
+
+function AddTask({ user, handleClose, getTasks, getTags, getProjects, tags, projects }
+    :
+    {
+        user: User,
+        tags: Tag[],
+        projects: Project[]
+    }
+) {
     const time = useRef("");
     const date = useRef("");
-    const [task, setTask] = useState({
+    const [task, setTask] = useState<TaskFormContent>({
         title: "",
         description: "",
         time: "",
         date: "",
         project: ""
     });
-    const [userTags, setUserTags] = useState([]);
+    const [userTags, setUserTags] = useState<string[]>([]);
     const [selected, setSelected] = useState("");
     const [isValid, setIsValid] = useState(true);
     const [isAddModalShown, setIsAddModalShown] = useState(false);
     const [isLoading, setIsLoading] = useState(false);
     const handleAddModalClose = () => setIsAddModalShown(false);
     const handleAddModalShow = () => setIsAddModalShown(true);
-    const handleChange = (e) => {
+    const handleChange = (e: ChangeEvent<HTMLInputElement | HTMLTextAreaElement>) => {
         const { name, value } = e.target;
         setTask(prev => {
             return (
@@ -32,19 +48,19 @@ function AddTask({ user, handleClose, getTasks, getTags, getProjects, tags, proj
             );
         });
     }
-    const addTag = (e) => {
-        const { id } = e.target;
+    const addTag = (e: MouseEvent<HTMLParagraphElement>) => {
+        const { id } = e.currentTarget;
         if (!userTags.includes(id)) { setUserTags([...userTags, id]); }
     }
-    const deleteTag = (e) => {
-        const { id } = e.target;
+    const deleteTag = (e: MouseEvent<HTMLButtonElement>) => {
+        const { id } = e.currentTarget;
         const newTags = userTags.filter(tag => {
             return tag !== id;
         });
         setUserTags(newTags);
     }
-    const setProject = (e) => {
-        const { id } = e.target;
+    const setProject = (e: MouseEvent<HTMLParagraphElement>) => {
+        const { id } = e.currentTarget;
         setTask({ ...task, project: id });
     }
     const removeProject = () => {
@@ -76,8 +92,8 @@ function AddTask({ user, handleClose, getTasks, getTags, getProjects, tags, proj
             setIsValid(false);
         }
     };
-    const handleSelect = (e) => {
-        const { id } = e.target;
+    const handleSelect = (e: MouseEvent<HTMLButtonElement>) => {
+        const { id } = e.currentTarget;
         if (id !== selected) {
             setSelected(id);
         } else {
@@ -91,7 +107,7 @@ function AddTask({ user, handleClose, getTasks, getTags, getProjects, tags, proj
         if (date.current === "") {
             setTask({ ...task, date: null, time: time.current });
         } else {
-            if(time.current === ""){ 
+            if (time.current === "") {
                 time.current = "00:00";
             }
             setTask({ ...task, date: date.current, time: time.current });

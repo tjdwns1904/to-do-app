@@ -1,5 +1,5 @@
-import React, { useEffect, useState } from "react";
-import Header from "@/components/Common/Header";
+import { useEffect, useState } from "react";
+import Header from "@/components/Registered/Header";
 import axios from "axios";
 import TaskCard from "@/components/Registered/Task/ViewTask/TaskCard";
 import AddTask from "@/components/Registered/Task/AddTask/AddTask";
@@ -7,44 +7,38 @@ import TaskDetail from "@/components/Registered/Task/ViewTask/TaskDetail";
 import LoadingPage from "../LoadingPage";
 import DeleteConfirm from "@/components/Registered/Task/DeleteTask/DeleteConfirm";
 import EmptyPage from "../EmptyPage";
+import { Project, Tag, Task, User } from "@/types/common";
 
-function Upcoming({ user, tags, getTags, projects, getProjects }) {
-    const [tasks, setTasks] = useState([]);
+function Inbox({ user, tags, getTags, projects, getProjects }
+    :
+    {
+        user: User,
+        tags: Tag[],
+        projects: Project[]
+    }) {
+    const [tasks, setTasks] = useState<Task[]>([]);
     const [isAddModalShown, setIsAddModalShown] = useState(false);
     const [isMenuShown, setIsMenuShown] = useState(false);
     const [isDetailShown, setIsDetailShown] = useState(false);
     const [isLoading, setIsLoading] = useState(false);
     const [isConfirmShown, setIsConfirmShown] = useState(false);
-    const [task, setTask] = useState({});
+    const [task, setTask] = useState<Task>();
     const [search, setSearch] = useState("");
-    const [originalTasks, setOriginalTasks] = useState([]);
+    const [originalTasks, setOriginalTasks] = useState<Task[]>([]);
     const getTasks = () => {
         setIsLoading(true);
         axios.post("http://localhost:3000/tasks", {
             id: user.id
         })
             .then(res => {
-                const upcomingTasks = res.data.filter(task => {
-                    if (task.date) {
-                        if (!task.isDone) {
-                            const date = new Date();
-                            const now = date.getFullYear() + "-" + (date.getMonth() + 1) + "-" +
-                                date.getDate() + " " + date.getHours() + ":" + date.getMinutes() + ":" + date.getSeconds();
-                            const d1 = task.date;
-                            const d2 = new Date(now).toISOString();
-                            return d1 > d2;
-                        }
-                    } else {
-                        return task;
-                    }
-                });
-                const sortedTasks = upcomingTasks.sort((a, b) => a.time.localeCompare(b.time));
-                setOriginalTasks(sortedTasks);
+                const sortedTasks = res.data.sort((a: Task, b: Task) => a.time.localeCompare(b.time));
                 setTasks(sortedTasks);
+                setOriginalTasks(sortedTasks);
             })
             .finally(() => setIsLoading(false));
     };
     const deleteTask = () => {
+        if(!task) return;
         setIsLoading(true);
         axios.post("http://localhost:3000/task/delete", {
             userId: user.id,
@@ -62,7 +56,7 @@ function Upcoming({ user, tags, getTags, projects, getProjects }) {
                 handleConfirmClose();
             })
     };
-    const handleTaskClick = (task) => {
+    const handleTaskClick = (task: Task) => {
         setTask(task);
         handleDetailShow();
     };
@@ -74,7 +68,7 @@ function Upcoming({ user, tags, getTags, projects, getProjects }) {
     const handleAddModalClose = () => { setIsAddModalShown(false) };
     const handleDetailShow = () => setIsDetailShown(true);
     const handleDetailClose = () => setIsDetailShown(false);
-    const handleConfirmShow = (task) => {
+    const handleConfirmShow = (task: Task) => {
         setTask(task);
         setIsConfirmShown(true);
     };
@@ -92,7 +86,7 @@ function Upcoming({ user, tags, getTags, projects, getProjects }) {
                 <Header user={user} tags={tags} projects={projects} getProjects={getProjects} getTags={getTags} isMenuShown={isMenuShown} setIsMenuShown={setIsMenuShown} />
                 <div className="main-container">
                     <div className="d-flex justify-content-between">
-                        <h2 className="page-title">Upcoming</h2>
+                        <h2 className="page-title">Inbox</h2>
                         <div className="search-bar-container">
                             <input className="search-bar" type="text" name="title" id="search-text" placeholder="Search" value={search} onChange={(e) => setSearch(e.target.value)} />
                             <button className="search-btn" onClick={searchTask} />
@@ -116,4 +110,4 @@ function Upcoming({ user, tags, getTags, projects, getProjects }) {
     )
 }
 
-export default Upcoming;
+export default Inbox;

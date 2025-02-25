@@ -1,7 +1,6 @@
-import React from "react";
 import { Button } from "react-bootstrap";
 
-function DeleteConfirm({ type, handleDelete, handleClose }) {
+function DeleteConfirm({ type, handleDelete, handleClose }: { type: string }) {
     return (
         <div className="background">
             <div className="modal-container">

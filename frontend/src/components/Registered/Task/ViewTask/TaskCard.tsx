@@ -1,8 +1,8 @@
+import { Task, User } from "@/types/common";
 import axios from "axios";
-import React from "react";
 
-function TaskCard({ user, task, getTasks, handleClick, handleDelete }) {
-    const updateState = (id, isDone) => {
+function TaskCard({ user, task, getTasks, handleClick, handleDelete } : {user: User, task: Task}) {
+    const updateState = (id: string, isDone: boolean) => {
         axios.post("http://localhost:3000/task/updateState", {
             userId: user.id,
             taskId: id,

@@ -1,9 +1,9 @@
-import React, { useState } from "react";
+import { ChangeEvent, MouseEvent, useState } from "react";
 import Header from "@/components/Common/Header";
 import { Button, Form } from "react-bootstrap";
 import { Link } from "react-router-dom";
 import Footer from "@/components/Common/Footer";
-import fb from '@/assets/images/fb.png';
+import IMAGES from "@/assets/images/images";
 
 
 function Signup() {
@@ -22,15 +22,15 @@ function Signup() {
     const [emailIsValid, setEmailIsValid] = useState(true);
     const [passwordIsValid, setPasswordIsValid] = useState(true);
     const [passwordIsMatch, setPasswordIsMatch] = useState(true);
-    const toggleShow = (e) => {
-        const { id } = e.target;
+    const toggleShow = (e: MouseEvent<HTMLButtonElement>) => {
+        const { id } = e.currentTarget;
         if (id === "p") {
             setShowPassword(prev => !prev);
         } else {
             setShowCPassword(prev => !prev);
         }
     };
-    const handleChange = (e) => {
+    const handleChange = (e: ChangeEvent<HTMLInputElement | HTMLTextAreaElement>) => {
         const { name, value } = e.target;
         setUser(prev => {
             return (
@@ -51,6 +51,7 @@ function Signup() {
         })
             .then(res => res.json())
             .then(res => {
+                console.log(res);
                 if (res.msg === "Registered successfully!") {
                     alert(res.msg);
                     window.location.href = "/login";
@@ -183,9 +184,9 @@ function Signup() {
                             <p className="mb-5 other-link">Already signed up? <Link to={"/login"}>Log in</Link> here!</p>
                         </Form>
                         <div className="col-md-6 mt-4 easy-login-btn-group">
-                            <Link className="col-md-12 mb-4"><img src={fb} alt="" />Continue with Facebook</Link>
-                            <Link className="col-md-12 mb-4"><img src={fb} alt="" />Continue with Facebook</Link>
-                            <Link className="col-md-12 mb-4"><img src={fb} alt="" />Continue with Facebook</Link>
+                            <Link className="col-md-12 mb-4"><img src={IMAGES.fb} alt="" />Continue with Facebook</Link>
+                            <Link className="col-md-12 mb-4"><img src={IMAGES.fb} alt="" />Continue with Facebook</Link>
+                            <Link className="col-md-12 mb-4"><img src={IMAGES.fb} alt="" />Continue with Facebook</Link>
                         </div>
                     </div>
                 </div>

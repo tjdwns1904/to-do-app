@@ -88,13 +88,13 @@ html body {
 
 .platform-img1 {
     height: 80px;
-    background: url('./assets/platforms1.png') no-repeat 100% 0;
+    background: url('./assets/images/platforms1.png') no-repeat 100% 0;
     background-size: 200px;
 }
 
 .platform-img2 {
     height: 80px;
-    background: url('./assets/platforms2.png') no-repeat 0% 0;
+    background: url('./assets/images/platforms2.png') no-repeat 0% 0;
     background-size: 200px;
 }
 
@@ -282,7 +282,7 @@ html body {
 }
 
 .active-bullet {
-    background: url("./assets/arrow-down-up.svg") no-repeat center;
+    background: url("./assets/images/arrow-down-up.svg") no-repeat center;
     filter: invert(1);
     width: 40px;
     height: 40px;
@@ -298,7 +298,7 @@ html body {
     position: absolute;
     width: 70px;
     height: 64px;
-    background: url("./assets/tag.png") no-repeat 0 -15px transparent;
+    background: url("./assets/images/tag.png") no-repeat 0 -15px transparent;
     opacity: 0.6;
     color: #fff;
     padding-top: 7px;
@@ -309,7 +309,7 @@ html body {
 }
 
 .fourth.bullet-tag {
-    background: url("./assets/tag.png") no-repeat 0 7px;
+    background: url("./assets/images/tag.png") no-repeat 0 7px;
     bottom: 0;
     background-size: cover;
     padding-top: 32px;
@@ -392,22 +392,22 @@ html body {
 }
 
 .yt {
-    content: url("./assets/yt.png");
+    content: url("./assets/images/yt.png");
     width: 50px;
 }
 
 .ig {
-    content: url("./assets/ig.png");
+    content: url("./assets/images/ig.png");
     width: 50px;
 }
 
 .fb {
-    content: url("./assets/fb.png");
+    content: url("./assets/images/fb.png");
     width: 50px;
 }
 
 .twit {
-    content: url("./assets/twit.png");
+    content: url("./assets/images/twit.png");
     width: 50px;
 }
 
@@ -492,7 +492,7 @@ textarea {
 }
 
 .passwordShown {
-    background: url("./assets/hide.png") no-repeat center;
+    background: url("./assets/images/hide.png") no-repeat center;
     position: absolute;
     width: 30px !important;
     height: 30px !important;
@@ -507,7 +507,7 @@ textarea {
 
 .passwordHidden {
     position: absolute;
-    background: url("./assets/view.png") no-repeat center;
+    background: url("./assets/images/view.png") no-repeat center;
     width: 30px !important;
     height: 30px !important;
     top: calc(50% - 15px);
@@ -557,15 +557,15 @@ small {
 }
 
 .inbox-link {
-    background: url('./assets/inbox.png') no-repeat 10px 10px transparent;
+    background: url('./assets/images/inbox.png') no-repeat 10px 10px transparent;
 }
 
 .today-link {
-    background: url('./assets/calendar.png') no-repeat 10px transparent;
+    background: url('./assets/images/calendar.png') no-repeat 10px transparent;
 }
 
 .upcoming-link {
-    background: url('./assets/upcoming.png') no-repeat 10px transparent;
+    background: url('./assets/images/upcoming.png') no-repeat 10px transparent;
 }
 
 .header-link {
@@ -602,7 +602,7 @@ small {
     padding: 8px 20px 8px 40px;
     border-radius: 10px;
     border: none;
-    background: url('./assets/logout.png') no-repeat 15px 16px transparent;
+    background: url('./assets/images/logout.png') no-repeat 15px 16px transparent;
     line-height: 30px;
 
     &:hover {
@@ -657,7 +657,7 @@ small {
     border: none;
     width: 20px;
     height: 20px;
-    background: url('./assets/close.png') no-repeat center;
+    background: url('./assets/images/close.png') no-repeat center;
 
     &:hover {
         transform: scale(1.2);
@@ -674,7 +674,7 @@ small {
 }
 
 .checked {
-    background: url("./assets/check-mark.png") no-repeat center rgb(187, 58, 189);
+    background: url("./assets/images/check-mark.png") no-repeat center rgb(187, 58, 189);
     filter: invert(1);
     border: none;
 }
@@ -707,7 +707,7 @@ small {
         width: 20px;
         height: 20px;
         display: inline-block;
-        background: url('./assets/full-stop.png') no-repeat center 6px transparent;
+        background: url('./assets/images/full-stop.png') no-repeat center 6px transparent;
     }
 }
 
@@ -780,7 +780,7 @@ small {
 }
 
 .schedule-btn {
-    background: url("./assets/schedule.png") no-repeat 10px #fff;
+    background: url("./assets/images/schedule.png") no-repeat 10px #fff;
     border: 1px solid #bbbbbb;
     color: #535353;
     border-radius: 5px;
@@ -796,7 +796,7 @@ small {
 .project-btn {
     width: 35px;
     height: 35px;
-    background: url("./assets/red-flag.png") no-repeat center #fff;
+    background: url("./assets/images/red-flag.png") no-repeat center #fff;
     border: 1px solid transparent;
     color: #535353;
     border-radius: 5px;
@@ -811,7 +811,7 @@ small {
 .tag-btn {
     width: 35px;
     height: 35px;
-    background: url("./assets/price-tag.png") no-repeat center #fff;
+    background: url("./assets/images/price-tag.png") no-repeat center #fff;
     border: 1px solid transparent;
     color: #535353;
     border-radius: 5px;
@@ -947,7 +947,7 @@ textarea {
     margin-top: 4px;
     width: 16px;
     height: 16px;
-    background: url('./assets/close.png') no-repeat center;
+    background: url('./assets/images/close.png') no-repeat center;
     border-radius: 50%;
 
     &:hover {
@@ -969,7 +969,7 @@ textarea {
 }
 
 .remove-btn {
-    background: url("./assets/delete.png") no-repeat 10px 13px transparent;
+    background: url("./assets/images/delete.png") no-repeat 10px 13px transparent;
     padding: 10px 10px 10px 40px;
     line-height: 25px;
     border-radius: 10px;
@@ -1030,7 +1030,7 @@ textarea {
     top: 20px;
     width: 16px;
     height: 16px;
-    background: url("./assets/down-arrow.png") no-repeat center;
+    background: url("./assets/images/down-arrow.png") no-repeat center;
     transform: rotate(180deg);
     animation: rotation 0.2s linear alternate-reverse;
 }   
@@ -1041,7 +1041,7 @@ textarea {
     top: 20px;
     width: 16px;
     height: 16px;
-    background: url("./assets/down-arrow.png") no-repeat center;
+    background: url("./assets/images/down-arrow.png") no-repeat center;
 }
 
 .add-text{
@@ -1049,7 +1049,7 @@ textarea {
 }
 
 .empty-list{
-    background: url("./assets/freedom-1238930.jpg") no-repeat center transparent;
+    background: url("./assets/images/freedom-1238930.jpg") no-repeat center transparent;
     background-size: cover;
     width: 400px;
     height: 400px;
@@ -1075,7 +1075,7 @@ textarea {
 .error-page{
     width: 700px;
     height: 700px;
-    background: url("./assets/404.png") no-repeat transparent center;
+    background: url("./assets/images/404.png") no-repeat transparent center;
     background-size: contain;
     position: absolute;
     top: 50%;
@@ -1094,7 +1094,7 @@ textarea {
 }
 
 .repeat{
-    background: url("./assets/refresh.png") no-repeat 0 3px transparent;
+    background: url("./assets/images/refresh.png") no-repeat 0 3px transparent;
     padding-left: 20px;
 }
 
@@ -1188,7 +1188,7 @@ textarea {
 .search-btn{
     width: 60px;
     height: 40px;
-    background: url("./assets/search-interface-symbol.png") no-repeat 20px center #f1f1f1;
+    background: url("./assets/images/search-interface-symbol.png") no-repeat 20px center #f1f1f1;
     border-top-right-radius: 25px;
     border-bottom-right-radius: 25px;
     border: 0.5px solid #b1b1b1;

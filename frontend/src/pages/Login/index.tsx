@@ -1,9 +1,9 @@
-import React, { useState } from "react";
+import { ChangeEvent, useState } from "react";
 import Header from "@/components/Common/Header";
 import Footer from "@/components/Common/Footer";
 import { Button, Form } from "react-bootstrap";
 import { Link } from "react-router-dom";
-import fb from '@/assets/images/fb.png';
+import IMAGES from "@/assets/images/images";
 import axios from "axios";
 
 function Login() {
@@ -22,6 +22,7 @@ function Login() {
             password: user.password
         }, { withCredentials: true })
             .then(res => {
+                console.log(res.data);
                 if (res.data.msg.startsWith("Welcome")) {
                     window.location.href = "/";
                 } else if (res.data.msg.startsWith("Wrong")) {
@@ -56,7 +57,7 @@ function Login() {
         }
         setIsDisabled(false);
     }
-    const handleChange = (e) => {
+    const handleChange = (e: ChangeEvent<HTMLTextAreaElement | HTMLInputElement>) => {
         const { name, value } = e.target;
         setUser(prev => {
             return (
@@ -113,9 +114,9 @@ function Login() {
                             <p className="mb-5 other-link">New member? <Link to={"/signup"}>Sign up</Link> here!</p>
                         </Form>
                         <div className="col-md-6 mt-4 easy-login-btn-group">
-                            <Link className="col-md-12 mb-4"><img src={fb} alt="" />Continue with Facebook</Link>
-                            <Link className="col-md-12 mb-4"><img src={fb} alt="" />Continue with Facebook</Link>
-                            <Link className="col-md-12 mb-4"><img src={fb} alt="" />Continue with Facebook</Link>
+                            <Link className="col-md-12 mb-4"><img src={IMAGES.fb} alt="" />Continue with Facebook</Link>
+                            <Link className="col-md-12 mb-4"><img src={IMAGES.fb} alt="" />Continue with Facebook</Link>
+                            <Link className="col-md-12 mb-4"><img src={IMAGES.fb} alt="" />Continue with Facebook</Link>
                         </div>
                     </div>
                 </div>
