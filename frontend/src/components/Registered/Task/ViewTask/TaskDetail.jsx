@@ -1,26 +1,28 @@
-import axios from "axios";
 import React, { useEffect, useRef, useState } from "react";
-import { Form } from "react-bootstrap";
+import { Form } from 'react-bootstrap';
 import AddForm from "./AddForm";
-import LoadingPage from "../LoadingPage";
+import axios from "axios";
+import LoadingPage from "../../../Common/LoadingPage";
 
-function AddTask({ user, handleClose, getTasks, getTags, getProjects, tags, projects }) {
-    const time = useRef("");
-    const date = useRef("");
-    const [task, setTask] = useState({
-        title: "",
-        description: "",
-        time: "",
-        date: "",
-        project: ""
-    });
-    const [userTags, setUserTags] = useState([]);
-    const [selected, setSelected] = useState("");
+function TaskDetail({ user, selectedTask, handleClose, getTasks, getTags, getProjects, tags, projects }) {
+    const [task, setTask] = useState({ ...selectedTask, tags: JSON.parse(selectedTask.tags) });
     const [isValid, setIsValid] = useState(true);
-    const [isAddModalShown, setIsAddModalShown] = useState(false);
     const [isLoading, setIsLoading] = useState(false);
-    const handleAddModalClose = () => setIsAddModalShown(false);
-    const handleAddModalShow = () => setIsAddModalShown(true);
+    const [selected, setSelected] = useState("");
+    const [isAddModalShown, setIsAddModalShown] = useState(false);
+    const date = useRef(task.date);
+    const time = useRef(task.time);
+    const addTag = (e) => {
+        const { id } = e.target;
+        if (task.tags) {
+            if (!task.tags.includes(id)) {
+                setTask({ ...task, tags: [...task.tags, id] });
+            }
+        } else {
+            const newTags = [id];
+            setTask({ ...task, tags: newTags });
+        }
+    }
     const handleChange = (e) => {
         const { name, value } = e.target;
         setTask(prev => {
@@ -29,75 +31,77 @@ function AddTask({ user, handleClose, getTasks, getTags, getProjects, tags, proj
                     ...prev,
                     [name]: value
                 }
-            );
+            )
         });
-    }
-    const addTag = (e) => {
+    };
+    const handleSelect = (e) => {
         const { id } = e.target;
-        if (!userTags.includes(id)) { setUserTags([...userTags, id]); }
+        if (id !== selected) { setSelected(id); }
+        else {
+            handleSelectionClose();
+        }
     }
-    const deleteTag = (e) => {
-        const { id } = e.target;
-        const newTags = userTags.filter(tag => {
-            return tag !== id;
-        });
-        setUserTags(newTags);
+    const handleSelectionClose = () => {
+        setSelected("");
     }
-    const setProject = (e) => {
-        const { id } = e.target;
-        setTask({ ...task, project: id });
+    const handleOk = () => {
+        setTask({ ...task, date: date.current, time: time.current});
+        handleSelectionClose();
     }
-    const removeProject = () => {
-        setTask({ ...task, project: "" });
-    }
-    const addTask = () => {
-        if (task.title !== "" && task.time !== "") {
-            setIsLoading(true);
+    const updateTask = () => {
+        if (task.title !== "" && task.due !== "") {
             setIsValid(true);
-            axios.post("http://localhost:3000/task/add", {
-                id: user.id,
-                task: task,
-                tags: JSON.stringify(userTags)
-            })
-                .then(res => {
-                    if (res.data.msg) {
-                        if (res.data.msg.endsWith("successfully!")) {
-                            handleClose();
+            setIsLoading(true);
+            if (task.tags) {
+                axios.post("http://localhost:3000/task/update", {
+                    userId: user.id,
+                    taskId: task.id,
+                    task: task,
+                    tags: JSON.stringify(task.tags)
+                })
+                    .then(res => {
+                        if (res.data.msg) {
+                            if (res.data.msg.endsWith("successfully!")) {
+                                getTasks();
+                            }
+                        } else {
+                            console.log(res.data.err);
+                        }
+                    })
+                    .finally(() => {
+                        setIsLoading(false);
+                        handleClose();
+                    });
+            } else {
+                axios.post("http://localhost:3000/task/update", {
+                    userId: user.id,
+                    taskId: task.id,
+                    task: task,
+                    tags: null
+                })
+                    .then(res => {
+                        if (res.data.msg) {
                             getTasks();
                         } else {
-                            alert(res.data.msg);
+                            console.log(res.data.err);
                         }
-                    } else {
-                        console.log(res.data.err);
-                    }
-                })
-                .finally(() => setIsLoading(false));
+                    })
+                    .finally(() => {
+                        setIsLoading(false);
+                        handleClose();
+                    });
+            }
         } else {
             setIsValid(false);
         }
     };
-    const handleSelect = (e) => {
+    const handleAddModalShow = () => setIsAddModalShown(true);
+    const handleAddModalClose = () => setIsAddModalShown(false);
+    const setProject = (e) => {
         const { id } = e.target;
-        if (id !== selected) {
-            setSelected(id);
-        } else {
-            handleSelectionClose();
-        }
-    };
-    const handleSelectionClose = () => {
-        setSelected("");
-    };
-    const handleOk = () => {
-        if (date.current === "") {
-            setTask({ ...task, date: null, time: time.current });
-        } else {
-            if(time.current === ""){ 
-                time.current = "00:00";
-            }
-            setTask({ ...task, date: date.current, time: time.current });
-        }
-        handleSelectionClose();
-    };
+        setTask({ ...task, project: id });
+    }
+    const removeProject = () => setTask({ ...task, project: "" });
     useEffect(() => {
         getProjects();
         getTags();
@@ -109,13 +113,13 @@ function AddTask({ user, handleClose, getTasks, getTags, getProjects, tags, proj
             <div className="background" onClick={handleClose}>
             </div>
             <div className="modal-container">
-                <h2>Add Task</h2>
+                <h2>Edit task</h2>
                 <Form>
-                    <Form.Control placeholder="Task Name" className="mb-2" name="title" value={task.title} onChange={(e) => handleChange(e)} />
-                    <Form.Control placeholder="Description" as="textarea" className="mb-4" name="description" value={task.description} onChange={(e) => handleChange(e)} />
-                    {(userTags.length !== 0 || task.project !== "") &&
+                    <Form.Control className="mb-2" name="title" defaultValue={task.title} onChange={handleChange} />
+                    <Form.Control className="mb-4" as="textarea" name="description" defaultValue={task.description} onChange={handleChange} />
+                    {((task.tags && task.tags.length !== 0) || (task.project && task.project !== "")) &&
                         <div className="tag-project-container">
-                            {task.project !== "" &&
+                            {(task.project && task.project !== "") &&
                                 <div className="task-project-container">
                                     <p>#{task.project}</p>
                                     <button className="delete-btn2" onClick={(e) => {
@@ -124,7 +128,7 @@ function AddTask({ user, handleClose, getTasks, getTags, getProjects, tags, proj
                                     }} />
                                 </div>
                             }
-                            {userTags.length !== 0 && userTags.map(tag => {
+                            {(task.tags && task.tags.length !== 0) && task.tags.map(tag => {
                                 return (
                                     <div key={tag} className="task-tags-container">
                                         <p>{tag}</p>
@@ -143,7 +147,7 @@ function AddTask({ user, handleClose, getTasks, getTags, getProjects, tags, proj
                             handleSelect(e);
                         }
                         }>
-                            {(date.current === "" && time.current === "") ? "Schedule" : task.date ? new Date(task.date).toLocaleDateString() + " " + task.time : task.time}
+                            {(task.time === "") ? "Schedule" : task.date ? new Date(task.date).toLocaleDateString() + " " + task.time.slice(0, task.time.lastIndexOf(":")) : task.time.slice(0, task.time.lastIndexOf(":"))}
                         </button>
                         <div>
                             <button id="tag" className="tag-btn" onClick={(e) => {
@@ -169,7 +173,7 @@ function AddTask({ user, handleClose, getTasks, getTags, getProjects, tags, proj
                                     <button className="delete-btn" onClick={handleSelectionClose} />
                                     <div className="datetime-input-container">
                                         <input type="date" name="date" className="me-2" onChange={(e) => date.current = e.target.value} />
-                                        <input type="time" name="time" onChange={(e) => time.current = e.target.value} />
+                                        <input type="time" name="time" onChange={(e) => time.current = e.target.value + ":00"} />
                                     </div>
                                     <div className="ok-btn-container">
                                         <button className="ok-btn" onClick={() => {
@@ -180,7 +184,7 @@ function AddTask({ user, handleClose, getTasks, getTags, getProjects, tags, proj
                             }
                             {selected === "tag" &&
                                 <div className="options tags-container">
-                                    <p className="mb-1">Tags</p>
+                                    <p className="mb-1 text-secondary">Tags</p>
                                     <button className="delete-btn" onClick={handleSelectionClose} />
                                     {tags.length !== 0 && tags.map(tag => {
                                         return (
@@ -192,7 +196,7 @@ function AddTask({ user, handleClose, getTasks, getTags, getProjects, tags, proj
                             }
                             {selected === "project" &&
                                 <div className="options projects-container">
-                                    <p className="mb-1">Projects</p>
+                                    <p className="mb-1 text-secondary">Project</p>
                                     <button className="delete-btn" onClick={handleSelectionClose} />
                                     {projects.length !== 0 && projects.map(project => {
                                         return (
@@ -205,15 +209,18 @@ function AddTask({ user, handleClose, getTasks, getTags, getProjects, tags, proj
                         </div>
                     }
                     <div className="mt-5">
-                        {!isValid && <p className="text-danger">Please enter the task name and its due date.</p>}
+                        {!isValid && <p className="text-danger">Please enter a task name and its due date.</p>}
                         <button className="add-btn me-1" onClick={(e) => {
                             e.preventDefault();
-                            addTask();
-                        }}>Add task</button>
+                            updateTask();
+                        }}>Edit</button>
                         <button className="cancel-btn" onClick={(e) => {
                             e.preventDefault();
                             handleClose();
-                        }}>Cancel</button>
+                        }}
+                        >
+                            Cancel
+                        </button>
                     </div>
                 </Form>
             </div>
@@ -221,4 +228,4 @@ function AddTask({ user, handleClose, getTasks, getTags, getProjects, tags, proj
     )
 }
 
-export default AddTask;
+export default TaskDetail;

@@ -1,8 +1,8 @@
 import React, { useEffect, useState } from "react";
-import Header from "./Header";
+import Header from "../../components/Common/Header";
 import { Button } from 'react-bootstrap';
 import { Link } from "react-router-dom";
-import Footer from "./Footer";
+import Footer from "../../components/Common/Footer";
 import scr1 from '../assets/scr1.png';
 import scr2 from '../assets/scr2.png';
 import scr3 from '../assets/scr3.png';

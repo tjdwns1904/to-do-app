@@ -1,8 +1,8 @@
 import React, { useState } from "react";
-import Header from "./Unregistered/Header";
+import Header from "../../components/Common/Header";
 import { Button, Form } from "react-bootstrap";
 import { Link } from "react-router-dom";
-import Footer from "./Unregistered/Footer";
+import Footer from "../../components/Common/Footer";
 import fb from './assets/fb.png';
 
 

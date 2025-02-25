@@ -3,8 +3,8 @@ import { Link, NavLink } from "react-router-dom";
 import profile from '../assets/user.png';
 import CustomContextMenu from "./CustomContextMenu";
 import axios from "axios";
-import DeleteConfirm from "./DeleteConfirm";
-import LoadingPage from "../LoadingPage";
+import DeleteConfirm from "./Task/DeleteTask/DeleteConfirm";
+import LoadingPage from "../Common/LoadingPage";
 
 function Header({ user, tags, projects, getProjects, getTags, isMenuShown, setIsMenuShown }) {
     const [point, setPoint] = useState({

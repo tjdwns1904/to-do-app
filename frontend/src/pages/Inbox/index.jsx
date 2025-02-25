@@ -1,14 +1,14 @@
 import React, { useEffect, useState } from "react";
-import Header from "./Header";
+import Header from "../Registered/Header";
 import axios from "axios";
 import TaskCard from "./TaskCard";
 import AddTask from "./AddTask";
 import TaskDetail from "./TaskDetail";
 import LoadingPage from "../LoadingPage";
-import DeleteConfirm from "./DeleteConfirm";
-import EmptyPage from "./EmptyPage";
+import DeleteConfirm from "../../components/Registered/Task/DeleteTask/DeleteConfirm";
+import EmptyPage from "../../components/Registered/Task/ViewTask/EmptyPage";
 
-function Upcoming({ user, tags, getTags, projects, getProjects }) {
+function Inbox({ user, tags, getTags, projects, getProjects }) {
     const [tasks, setTasks] = useState([]);
     const [isAddModalShown, setIsAddModalShown] = useState(false);
     const [isMenuShown, setIsMenuShown] = useState(false);
@@ -24,23 +24,9 @@ function Upcoming({ user, tags, getTags, projects, getProjects }) {
             id: user.id
         })
             .then(res => {
-                const upcomingTasks = res.data.filter(task => {
-                    if (task.date) {
-                        if (!task.isDone) {
-                            const date = new Date();
-                            const now = date.getFullYear() + "-" + (date.getMonth() + 1) + "-" +
-                                date.getDate() + " " + date.getHours() + ":" + date.getMinutes() + ":" + date.getSeconds();
-                            const d1 = task.date;
-                            const d2 = new Date(now).toISOString();
-                            return d1 > d2;
-                        }
-                    } else {
-                        return task;
-                    }
-                });
-                const sortedTasks = upcomingTasks.sort((a, b) => a.time.localeCompare(b.time));
-                setOriginalTasks(sortedTasks);
+                const sortedTasks = res.data.sort((a, b) => a.time.localeCompare(b.time));
                 setTasks(sortedTasks);
+                setOriginalTasks(sortedTasks);
             })
             .finally(() => setIsLoading(false));
     };
@@ -92,7 +78,7 @@ function Upcoming({ user, tags, getTags, projects, getProjects }) {
                 <Header user={user} tags={tags} projects={projects} getProjects={getProjects} getTags={getTags} isMenuShown={isMenuShown} setIsMenuShown={setIsMenuShown} />
                 <div className="main-container">
                     <div className="d-flex justify-content-between">
-                        <h2 className="page-title">Upcoming</h2>
+                        <h2 className="page-title">Inbox</h2>
                         <div className="search-bar-container">
                             <input className="search-bar" type="text" name="title" id="search-text" placeholder="Search" value={search} onChange={(e) => setSearch(e.target.value)} />
                             <button className="search-btn" onClick={searchTask} />
@@ -116,4 +102,4 @@ function Upcoming({ user, tags, getTags, projects, getProjects }) {
     )
 }
 
-export default Upcoming;
+export default Inbox;
