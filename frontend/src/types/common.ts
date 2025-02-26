@@ -1,6 +1,14 @@
 export interface User {
     id: string;
     username: string;
+    email: string;
+    password: string;
+    name: string;
+}
+
+export interface UserEntity {
+    user: User[];
+    isLoggedIn: boolean;
 }
 
 export interface Task {

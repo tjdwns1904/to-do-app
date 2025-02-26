@@ -10,55 +10,44 @@ import Inbox from './pages/Inbox/index';
 import axios from 'axios';
 import LoadingPage from './pages/LoadingPage'
 import NotFound from './pages/NotFound';
-import { User } from './types/common'
+import { QueryClient, QueryClientProvider } from '@tanstack/react-query';
+import { useGetUser } from './hooks/useGetUser'
+import { useSessionStorage } from '@uidotdev/usehooks'
+import { INITIAL_USER_VALUE } from './utils/storage_const'
 
-function App() {
+const queryClient = new QueryClient();
+const InnerApp = () => {
   axios.defaults.withCredentials = true;
   const [isLoggedIn, setIsLoggedIn] = useState(false);
-  const [isLoading, setIsLoading] = useState(true);
-  const [user, setUser] = useState<User>({
-    id: "",
-    username: ""
-  });
   const [projects, setProjects] = useState([]);
   const [tags, setTags] = useState([]);
-
-  const checkAuth = () => {
-    axios.get("http://localhost:3000/auth", { withCredentials: true })
-      .then(res => {
-        if (res.data.isLoggedIn) {
-          setUser(res.data.user[0]);
-        }
-        setIsLoggedIn(res.data.isLoggedIn);
-      }
-      )
-      .finally(() => setIsLoading(false));
-  }
+  const [_, setUser] = useSessionStorage("user", INITIAL_USER_VALUE);
+  const { data: user, isLoading } = useGetUser({
+    queryKey: ["user"],
+  });
   const getProjects = () => {
-    axios.post("http://localhost:3000/projects", {
-      id: user.id
-    })
+    axios.get(`http://localhost:3000/projects/${user.id}`)
       .then(res => setProjects(res.data));
   }
   const getTags = () => {
-    axios.post("http://localhost:3000/tags", {
-      id: user.id
-    })
+    axios.get(`http://localhost:3000/tags/${user.id}`)
       .then(res => setTags(res.data));
   }
   useEffect(() => {
-    checkAuth();
-  }, []);
+    if (user) {
+      setUser(user.user[0]);
+    }
+  }, [user]);
   if (!isLoading) {
     return (
       <>
         <BrowserRouter>
           <Routes>
-            {<Route path='/' element={isLoggedIn ? <Inbox user={user} tags={tags} projects={projects} getProjects={getProjects} getTags={getTags} /> : <Home />} />}
-            {!isLoggedIn && <Route path='/login' element={<Login />} />}
-            {!isLoggedIn && <Route path='/signup' element={<Signup />} />}
-            {isLoggedIn && <Route path='/today' element={<Today user={user} tags={tags} projects={projects} getProjects={getProjects} getTags={getTags} />} />}
-            {isLoggedIn && <Route path='/upcoming' element={<Upcoming user={user} tags={tags} projects={projects} getProjects={getProjects} getTags={getTags} />} />}
+            {<Route path='/' element={user?.isLoggedIn ? <Inbox user={user.user[0]} getProjects={getProjects} getTags={getTags} /> : <Home />} />}
+            {!user?.isLoggedIn && <Route path='/login' element={<Login />} />}
+            {!user?.isLoggedIn && <Route path='/signup' element={<Signup />} />}
+            {user?.isLoggedIn && <Route path='/today' element={<Today user={user.user[0]} getProjects={getProjects} getTags={getTags} />} />}
+            {user?.isLoggedIn && <Route path='/upcoming' element={<Upcoming user={user.user[0]} getProjects={getProjects} getTags={getTags} />} />}
             {/* {isLoggedIn && <Route path='/filter/:type/:name' element={<FilteredTask user={user} tags={tags} projects={projects} getProjects={getProjects} getTags={getTags} />} />} */}
             <Route path='*' element={<NotFound />} />
           </Routes>
@@ -70,6 +59,13 @@ function App() {
       <LoadingPage />
     )
   }
+}
+function App() {
+  return (
+    <QueryClientProvider client={queryClient}>
+      <InnerApp />
+    </QueryClientProvider>
+  )
 }
 
 export default App

@@ -7,15 +7,12 @@ import TaskDetail from "@/components/Registered/Task/ViewTask/TaskDetail";
 import LoadingPage from "../LoadingPage";
 import DeleteConfirm from "@/components/Registered/Task/DeleteTask/DeleteConfirm";
 import EmptyPage from "../EmptyPage";
-import { Project, Tag, Task, User } from "@/types/common";
+import { Task } from "@/types/common";
+import { useGetTasks } from "@/hooks/useGetTasks";
+import { useSessionStorage } from "@uidotdev/usehooks";
+import { INITIAL_USER_VALUE } from "@/utils/storage_const";
 
-function Upcoming({ user, tags, getTags, projects, getProjects } 
-    :
-    {
-        user: User,
-        tags: Tag[],
-        projects: Project[]
-    }) {
+function Upcoming({ getTags, getProjects }) {
     const [tasks, setTasks] = useState<Task[]>([]);
     const [isAddModalShown, setIsAddModalShown] = useState(false);
     const [isMenuShown, setIsMenuShown] = useState(false);
@@ -25,6 +22,11 @@ function Upcoming({ user, tags, getTags, projects, getProjects }
     const [task, setTask] = useState<Task>();
     const [search, setSearch] = useState("");
     const [originalTasks, setOriginalTasks] = useState<Task[]>([]);
+    const [user] = useSessionStorage("user", INITIAL_USER_VALUE);
+    const { data } = useGetTasks(user.id, {
+        queryKey: ["tasks", user.id],
+        staleTime: 1000 * 60 * 5
+    });
     const getTasks = () => {
         setIsLoading(true);
         axios.post("http://localhost:3000/tasks", {
@@ -52,7 +54,7 @@ function Upcoming({ user, tags, getTags, projects, getProjects }
             .finally(() => setIsLoading(false));
     };
     const deleteTask = () => {
-        if(!task) return;
+        if (!task) return;
         setIsLoading(true);
         axios.post("http://localhost:3000/task/delete", {
             userId: user.id,
@@ -95,9 +97,9 @@ function Upcoming({ user, tags, getTags, projects, getProjects }
             {isLoading && <LoadingPage />}
             {isConfirmShown && <DeleteConfirm type="task" handleClose={handleConfirmClose} handleDelete={deleteTask} />}
             <div className="page-container" onClick={() => setIsMenuShown(false)}>
-                {isDetailShown && <TaskDetail user={user} getTasks={getTasks} selectedTask={task} handleClose={handleDetailClose} getProjects={getProjects} getTags={getTags} tags={tags} projects={projects} />}
-                {isAddModalShown && <AddTask user={user} getTasks={getTasks} handleClose={handleAddModalClose} getProjects={getProjects} getTags={getTags} tags={tags} projects={projects} />}
-                <Header user={user} tags={tags} projects={projects} getProjects={getProjects} getTags={getTags} isMenuShown={isMenuShown} setIsMenuShown={setIsMenuShown} />
+                {isDetailShown && <TaskDetail user={user} getTasks={getTasks} selectedTask={task} handleClose={handleDetailClose} getProjects={getProjects} getTags={getTags} />}
+                {isAddModalShown && <AddTask getTasks={getTasks} handleClose={handleAddModalClose} getProjects={getProjects} getTags={getTags} />}
+                <Header getProjects={getProjects} getTags={getTags} isMenuShown={isMenuShown} setIsMenuShown={setIsMenuShown} />
                 <div className="main-container">
                     <div className="d-flex justify-content-between">
                         <h2 className="page-title">Upcoming</h2>
@@ -107,9 +109,9 @@ function Upcoming({ user, tags, getTags, projects, getProjects }
                         </div>
                     </div>
                     <div className="add-task-btn" onClick={handleAddModalShow}>+ Click here to add tasks</div>
-                    {tasks.length !== 0 ?
+                    {data ?
                         <div className="tasks-container">
-                            {tasks.map(task => {
+                            {data.map(task => {
                                 return (
                                     <TaskCard key={task.id} user={user} task={task} getTasks={getTasks} handleClick={handleTaskClick} handleDelete={handleConfirmShow} />
                                 )

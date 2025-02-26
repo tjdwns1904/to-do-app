@@ -1,7 +1,10 @@
-import { Task, User } from "@/types/common";
+import { Task } from "@/types/common";
+import { INITIAL_USER_VALUE } from "@/utils/storage_const";
+import { useSessionStorage } from "@uidotdev/usehooks";
 import axios from "axios";
 
-function TaskCard({ user, task, getTasks, handleClick, handleDelete } : {user: User, task: Task}) {
+function TaskCard({ task, getTasks, handleClick, handleDelete }: { task: Task }) {
+    const [user] = useSessionStorage("user", INITIAL_USER_VALUE);
     const updateState = (id: string, isDone: boolean) => {
         axios.post("http://localhost:3000/task/updateState", {
             userId: user.id,
@@ -19,7 +22,7 @@ function TaskCard({ user, task, getTasks, handleClick, handleDelete } : {user: U
                     {(task.project && task.project !== "") &&
                         <p className="text-secondary project-name">{task.project}</p>
                     }
-                    {(task.tags && task.tags.length !== 0) && JSON.parse(task.tags).map(tag => {
+                    {(task.tags && task.tags.length !== 0) && JSON.parse(task.tags).map((tag: string) => {
                         return (
                             <p key={tag} className="text-secondary project-name">{tag}</p>
                         )

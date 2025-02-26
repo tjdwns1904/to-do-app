@@ -2,17 +2,18 @@ import axios from "axios";
 import { ChangeEvent, useState } from "react";
 import { Form } from "react-bootstrap";
 import LoadingPage from "@/pages/LoadingPage";
-import { User } from "@/types/common";
+import { useSessionStorage } from "@uidotdev/usehooks";
+import { INITIAL_USER_VALUE } from "@/utils/storage_const";
 
-function AddForm({ type, user, getTags, getProjects, handleClose }
+function AddForm({ type, getTags, getProjects, handleClose }
     :
     {
         type: string,
-        user: User,
     }) {
     const [name, setName] = useState("");
     const [isValid, setIsValid] = useState(true);
     const [isLoading, setIsLoading] = useState(false);
+    const [user] = useSessionStorage("user", INITIAL_USER_VALUE);
     const addData = () => {
         if (name !== "") {
             setIsLoading(true);

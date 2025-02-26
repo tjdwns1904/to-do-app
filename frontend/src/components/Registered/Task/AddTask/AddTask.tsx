@@ -3,7 +3,10 @@ import { MouseEvent, ChangeEvent, useEffect, useRef, useState } from "react";
 import { Form } from "react-bootstrap";
 import AddForm from "@/components/Registered/Form/AddForm";
 import LoadingPage from "@/pages/LoadingPage";
-import { Project, Tag, User } from "@/types/common";
+import { useGetTags } from "@/hooks/useGetTags";
+import { useGetProjects } from "@/hooks/useGetProjects";
+import { useSessionStorage } from "@uidotdev/usehooks";
+import { INITIAL_USER_VALUE } from "@/utils/storage_const";
 
 interface TaskFormContent {
     title: string;
@@ -13,14 +16,7 @@ interface TaskFormContent {
     project: string;
 }
 
-function AddTask({ user, handleClose, getTasks, getTags, getProjects, tags, projects }
-    :
-    {
-        user: User,
-        tags: Tag[],
-        projects: Project[]
-    }
-) {
+function AddTask({ handleClose, getTasks, getTags, getProjects }) {
     const time = useRef("");
     const date = useRef("");
     const [task, setTask] = useState<TaskFormContent>({
@@ -35,6 +31,15 @@ function AddTask({ user, handleClose, getTasks, getTags, getProjects, tags, proj
     const [isValid, setIsValid] = useState(true);
     const [isAddModalShown, setIsAddModalShown] = useState(false);
     const [isLoading, setIsLoading] = useState(false);
+    const [user] = useSessionStorage("user", INITIAL_USER_VALUE);
+    const { data: tags } = useGetTags(user.id, {
+        queryKey: ["tags", user.id],
+        staleTime: 1000 * 60 * 5
+    });
+    const { data: projects } = useGetProjects(user.id, {
+        queryKey: ["projects", user.id],
+        staleTime: 1000 * 60 * 5
+    });
     const handleAddModalClose = () => setIsAddModalShown(false);
     const handleAddModalShow = () => setIsAddModalShown(true);
     const handleChange = (e: ChangeEvent<HTMLInputElement | HTMLTextAreaElement>) => {
@@ -198,7 +203,7 @@ function AddTask({ user, handleClose, getTasks, getTags, getProjects, tags, proj
                                 <div className="options tags-container">
                                     <p className="mb-1">Tags</p>
                                     <button className="delete-btn" onClick={handleSelectionClose} />
-                                    {tags.length !== 0 && tags.map(tag => {
+                                    {tags && tags.length !== 0 && tags.map(tag => {
                                         return (
                                             <p key={tag.id} id={tag.name} className="option-item" onClick={(e) => addTag(e)}>{tag.name}</p>
                                         )
@@ -210,7 +215,7 @@ function AddTask({ user, handleClose, getTasks, getTags, getProjects, tags, proj
                                 <div className="options projects-container">
                                     <p className="mb-1">Projects</p>
                                     <button className="delete-btn" onClick={handleSelectionClose} />
-                                    {projects.length !== 0 && projects.map(project => {
+                                    {projects && projects.length !== 0 && projects.map(project => {
                                         return (
                                             <p key={project.id} id={project.name} className="option-item" onClick={(e) => setProject(e)}>{project.name}</p>
                                         )

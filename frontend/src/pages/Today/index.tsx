@@ -8,15 +8,12 @@ import LoadingPage from "../LoadingPage";
 import DeleteConfirm from "@/components/Registered/Task/DeleteTask/DeleteConfirm";
 import EmptyPage from "../EmptyPage";
 import Calendar from "./_components/Calendar";
-import { Project, Tag, Task, User } from "@/types/common";
+import { Task } from "@/types/common";
+import { useGetTasks } from "@/hooks/useGetTasks";
+import { useSessionStorage } from "@uidotdev/usehooks";
+import { INITIAL_USER_VALUE } from "@/utils/storage_const";
 
-function Today({ user, tags, getTags, projects, getProjects }
-    :
-    {
-        user: User,
-        tags: Tag[],
-        projects: Project[]
-    }) {
+function Today({ getTags, getProjects }) {
     const [tasks, setTasks] = useState<Task[]>([]);
     const [isAddModalShown, setIsAddModalShown] = useState(false);
     const [isMenuShown, setIsMenuShown] = useState(false);
@@ -25,6 +22,11 @@ function Today({ user, tags, getTags, projects, getProjects }
     const [isConfirmShown, setIsConfirmShown] = useState(false);
     const [task, setTask] = useState<Task>();
     const [tasksLeft, setTasksLeft] = useState(0);
+    const [user] = useSessionStorage("user", INITIAL_USER_VALUE);
+    const { data } = useGetTasks(user.id, {
+        queryKey: ["tasks", user.id],
+        staleTime: 1000 * 60 * 5
+    });
     const getTasks = () => {
         let taskLeft = 0;
         setIsLoading(true);
@@ -94,20 +96,20 @@ function Today({ user, tags, getTags, projects, getProjects }
             {isLoading && <LoadingPage />}
             {isConfirmShown && <DeleteConfirm type="task" handleClose={handleConfirmClose} handleDelete={deleteTask} />}
             <div className="page-container" onClick={() => setIsMenuShown(false)}>
-                {isDetailShown && <TaskDetail user={user} getTasks={getTasks} selectedTask={task} handleClose={handleDetailClose} getProjects={getProjects} getTags={getTags} tags={tags} projects={projects} />}
-                {isAddModalShown && <AddTask user={user} getTasks={getTasks} handleClose={handleAddModalClose} getProjects={getProjects} getTags={getTags} tags={tags} projects={projects} />}
-                <Header user={user} tags={tags} projects={projects} getProjects={getProjects} getTags={getTags} isMenuShown={isMenuShown} setIsMenuShown={setIsMenuShown} />
+                {isDetailShown && <TaskDetail getTasks={getTasks} selectedTask={task} handleClose={handleDetailClose} getProjects={getProjects} getTags={getTags} />}
+                {isAddModalShown && <AddTask getTasks={getTasks} handleClose={handleAddModalClose} getProjects={getProjects} getTags={getTags} />}
+                <Header getProjects={getProjects} getTags={getTags} isMenuShown={isMenuShown} setIsMenuShown={setIsMenuShown} />
                 <div className="main-container today">
                     <div className="d-flex justify-content-between align-items-center">
                         <h2 className="page-title">Today</h2>
                         <p className="task-left">{tasksLeft + "/" + tasks.length}</p >
                     </div>
                     <div className="add-task-btn" onClick={handleAddModalShow}>+ Click here to add tasks</div>
-                    {tasks.length !== 0 ?
+                    {data ?
                         <div className="tasks-container">
-                            {tasks.map(task => {
+                            {data.map(task => {
                                 return (
-                                    <TaskCard key={task.id} user={user} task={task} getTasks={getTasks} handleClick={handleTaskClick} handleDelete={handleConfirmShow} />
+                                    <TaskCard key={task.id} task={task} getTasks={getTasks} handleClick={handleTaskClick} handleDelete={handleConfirmShow} />
                                 )
                             })}
                         </div>

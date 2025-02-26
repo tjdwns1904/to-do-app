@@ -3,20 +3,30 @@ import { Form } from 'react-bootstrap';
 import AddForm from "@/components/Registered/Form/AddForm";
 import axios from "axios";
 import LoadingPage from "@/pages/LoadingPage";
-import { Project, Tag, Task, User } from "@/types/common";
+import { Task } from "@/types/common";
+import { useGetTags } from "@/hooks/useGetTags";
+import { useGetProjects } from "@/hooks/useGetProjects";
+import { INITIAL_USER_VALUE } from "@/utils/storage_const";
+import { useSessionStorage } from "@uidotdev/usehooks";
 
-function TaskDetail({ user, selectedTask, handleClose, getTasks, getTags, getProjects, tags, projects }
+function TaskDetail({ selectedTask, handleClose, getTasks, getTags, getProjects }
     : {
-        user: User,
         selectedTask: Task,
-        tags: Tag[],
-        projects: Project[]
     }) {
     const [task, setTask] = useState({ ...selectedTask, tags: JSON.parse(selectedTask.tags) });
     const [isValid, setIsValid] = useState(true);
     const [isLoading, setIsLoading] = useState(false);
     const [selected, setSelected] = useState("");
     const [isAddModalShown, setIsAddModalShown] = useState(false);
+    const [user] = useSessionStorage("user", INITIAL_USER_VALUE);
+    const { data: tags } = useGetTags(user.id, {
+        queryKey: ["tags", user.id],
+        staleTime: 1000 * 60 * 5
+    });
+    const { data: projects } = useGetProjects(user.id, {
+        queryKey: ["projects", user.id],
+        staleTime: 1000 * 60 * 5
+    });
     const date = useRef(task.date);
     const time = useRef(task.time);
     const addTag = (e: MouseEvent<HTMLParagraphElement>) => {
@@ -30,7 +40,7 @@ function TaskDetail({ user, selectedTask, handleClose, getTasks, getTags, getPro
             setTask({ ...task, tags: newTags });
         }
     }
-    
+
     const deleteTag = (e: MouseEvent<HTMLButtonElement>) => {
         const { id } = e.currentTarget;
         const newTags = task.tags.filter((tag: string) => {
@@ -124,7 +134,7 @@ function TaskDetail({ user, selectedTask, handleClose, getTasks, getTags, getPro
     return (
         <>
             {isLoading && <LoadingPage />}
-            {isAddModalShown && <AddForm type={selected} user={user} getProjects={getProjects} getTags={getTags} handleClose={handleAddModalClose} />}
+            {isAddModalShown && <AddForm type={selected} getProjects={getProjects} getTags={getTags} handleClose={handleAddModalClose} />}
             <div className="background" onClick={handleClose}>
             </div>
             <div className="modal-container">
@@ -201,7 +211,7 @@ function TaskDetail({ user, selectedTask, handleClose, getTasks, getTags, getPro
                                 <div className="options tags-container">
                                     <p className="mb-1 text-secondary">Tags</p>
                                     <button className="delete-btn" onClick={handleSelectionClose} />
-                                    {tags.length !== 0 && tags.map(tag => {
+                                    {tags && tags.length !== 0 && tags.map(tag => {
                                         return (
                                             <p key={tag.id} id={tag.name} className="option-item" onClick={(e) => addTag(e)}>{tag.name}</p>
                                         )
@@ -213,7 +223,7 @@ function TaskDetail({ user, selectedTask, handleClose, getTasks, getTags, getPro
                                 <div className="options projects-container">
                                     <p className="mb-1 text-secondary">Project</p>
                                     <button className="delete-btn" onClick={handleSelectionClose} />
-                                    {projects.length !== 0 && projects.map(project => {
+                                    {projects && projects.length !== 0 && projects.map(project => {
                                         return (
                                             <p key={project.id} id={project.name} className="option-item" onClick={(e) => setProject(e)}>{project.name}</p>
                                         )

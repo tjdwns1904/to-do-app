@@ -1,19 +1,16 @@
-import { useEffect, useState } from "react";
+import { useState } from "react";
 import { NavLink } from "react-router-dom";
 import IMAGES from "@/assets/images/images";
 import CustomContextMenu from "./ContextMenu/CustomContextMenu";
 import axios from "axios";
 import DeleteConfirm from "./Task/DeleteTask/DeleteConfirm";
 import LoadingPage from "@/pages/LoadingPage";
-import { Project, Tag, User } from "@/types/common";
+import { useGetTags } from "@/hooks/useGetTags";
+import { useGetProjects } from "@/hooks/useGetProjects";
+import { useSessionStorage } from "@uidotdev/usehooks";
+import { INITIAL_USER_VALUE } from "@/utils/storage_const";
 
-function Header({ user, tags, projects, getProjects, getTags, isMenuShown, setIsMenuShown }
-    :
-    {
-        user: User,
-        tags: Tag[],
-        projects: Project[]
-    }) {
+function Header({ getProjects, getTags, isMenuShown, setIsMenuShown }) {
     const [point, setPoint] = useState({
         x: 0,
         y: 0
@@ -30,6 +27,15 @@ function Header({ user, tags, projects, getProjects, getTags, isMenuShown, setIs
     const handleClose = () => setIsShown(false);
     const handleProjectToggle = () => setIsProjectCollapsed(prev => !prev);
     const handleTagToggle = () => setIsTagCollapsed(prev => !prev);
+    const [user] = useSessionStorage("user", INITIAL_USER_VALUE);
+    const { data: tags } = useGetTags(user.id, {
+        queryKey: ["tags", user.id],
+        staleTime: 1000 * 60 * 5,
+    });
+    const { data: projects } = useGetProjects(user.id, {
+        queryKey: ["projects", user.id],
+        staleTime: 1000 * 60 * 5
+    });
     const logout = () => {
         fetch('http://localhost:3000/auth/logout', {
             method: "GET",
@@ -85,12 +91,6 @@ function Header({ user, tags, projects, getProjects, getTags, isMenuShown, setIs
                 })
         }
     }
-
-    useEffect(() => {
-        getProjects();
-        getTags();
-    }, []);
-
     return (
         <>
             {isLoading && <LoadingPage />}
@@ -104,7 +104,7 @@ function Header({ user, tags, projects, getProjects, getTags, isMenuShown, setIs
                     <NavLink to={'/'} className={({ isActive }) => (isActive) ? "active header-link inbox-link" : "header-link inbox-link"}>Inbox</NavLink>
                     <NavLink to={'/today'} className={({ isActive }) => (isActive) ? "active header-link today-link" : "header-link today-link"}>Today</NavLink>
                     <NavLink to={'/upcoming'} className={({ isActive }) => (isActive) ? "active header-link upcoming-link" : "header-link upcoming-link"}>Upcoming</NavLink>
-                    {projects.length !== 0 &&
+                    {projects && projects.length !== 0 &&
                         <div className="list-container">
                             <p className="list-title" onClick={handleProjectToggle}>Projects</p>
                             <div className={isProjectCollapsed ? "list-shown" : "list-hidden"} onClick={handleProjectToggle} />
@@ -124,7 +124,7 @@ function Header({ user, tags, projects, getProjects, getTags, isMenuShown, setIs
                             })}
                         </div>
                     }
-                    {tags.length !== 0 &&
+                    {tags && tags.length !== 0 &&
                         <div className="list-container">
                             <p className="list-title" onClick={handleTagToggle}>Tags</p>
                             <div className={isTagCollapsed ? "list-shown" : "list-hidden"} onClick={handleTagToggle} />
