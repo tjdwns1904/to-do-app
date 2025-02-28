@@ -76,9 +76,9 @@ const register = (req, res) => {
 }
 
 const logout = (req, res) => {
-    res.clearCookie('username');
     req.session.destroy();
-    return res.send({msg: "Logged out succesfully!"});
+    res.clearCookie("username");
+    res.status(200).send({msg: "Logged out succesfully!"});
 }
 
 module.exports = { login, register, checkAuth, logout };

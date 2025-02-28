@@ -1,11 +1,11 @@
 const db = require('../config/database');
 
 const addProject = (req, res) => {
-    const { id, project } = req.body;
-    db.query("SELECT * FROM projects WHERE userid = ? AND name = ?", [id, project], (err, r) => {
+    const { userid, name } = req.body;
+    db.query("SELECT * FROM projects WHERE userid = ? AND name = ?", [userid, name], (err, r) => {
         if(err)return res.send({err: err});
         if(r.length === 0){
-            db.query("INSERT INTO projects (userid, name) VALUES (?, ?)", [id, project], (err, result) => {
+            db.query("INSERT INTO projects (userid, name) VALUES (?, ?)", [userid, name], (err, result) => {
                 if (err) return res.send({ err: err });
                 return res.send({ msg: "Project added successfully" });
             });
@@ -16,11 +16,12 @@ const addProject = (req, res) => {
 };
 
 const deleteProject = (req, res) => {
-    const { userId, project } = req.body;
-    db.query("SELECT * FROM tasks WHERE userid = ? AND project = ?", [userId, project], (err, result) => {
+    const { name } = req.params;
+    const { userID } = req.body;
+    db.query("SELECT * FROM tasks WHERE userid = ? AND project = ?", [userID, name], (err, result) => {
         if (err) return res.send({ err: err });
         if (result.length === 0) {
-            db.query("DELETE FROM projects WHERE userid = ? AND name = ?", [userId, project], (err, r) => {
+            db.query("DELETE FROM projects WHERE userid = ? AND name = ?", [userID, name], (err, r) => {
                 if (err) return res.send({ err: err });
                 return res.send({ msg: "Project deleted successfully!" });
             })
