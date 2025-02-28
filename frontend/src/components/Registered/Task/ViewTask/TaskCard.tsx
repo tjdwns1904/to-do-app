@@ -1,21 +1,16 @@
 import { Task } from "@/types/common";
-import { INITIAL_USER_VALUE } from "@/utils/storage_const";
-import { useSessionStorage } from "@uidotdev/usehooks";
-import axios from "axios";
 
-function TaskCard({ task, getTasks, handleClick, handleDelete }: { task: Task }) {
-    const [user] = useSessionStorage("user", INITIAL_USER_VALUE);
-    const updateState = (id: string, isDone: boolean) => {
-        axios.post("http://localhost:3000/task/updateState", {
-            userId: user.id,
-            taskId: id,
-            isDone: isDone
-        })
-            .then(() => getTasks());
-    };
+interface Props {
+    task: Task;
+    handleClick: (task: Task) => void;
+    handleDelete: (task: Task) => void;
+    handleUpdateState: (task: Task) => void;
+}
+
+function TaskCard({ task, handleUpdateState, handleClick, handleDelete }: Props) {
     return (
         <div key={task.id} className="task-container">
-            <div className={task.isDone ? "checkbox checked" : "checkbox"} onClick={() => updateState(task.id, task.isDone)} />
+            <div className={task.isDone ? "checkbox checked" : "checkbox"} onClick={() => handleUpdateState(task)} />
             <div onClick={() => handleClick(task)}>
                 <p className={task.isDone ? "task-title done" : "task-title"}>{task.title}</p>
                 <div className="task-sub-container">

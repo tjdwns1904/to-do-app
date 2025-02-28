@@ -1,8 +1,7 @@
-import { useEffect, useState } from "react";
+import { useState } from "react";
 import Header from "@/components/Registered/Header";
-import axios from "axios";
 import TaskCard from "@/components/Registered/Task/ViewTask/TaskCard";
-import AddTask from "@/components/Registered/Task/AddTask/AddTask";
+import AddTask, { AddTaskFormContent } from "@/components/Registered/Task/AddTask/AddTask";
 import TaskDetail from "@/components/Registered/Task/ViewTask/TaskDetail";
 import LoadingPage from "../LoadingPage";
 import DeleteConfirm from "@/components/Registered/Task/DeleteTask/DeleteConfirm";
@@ -11,94 +10,143 @@ import { Task } from "@/types/common";
 import { useGetTasks } from "@/hooks/useGetTasks";
 import { useSessionStorage } from "@uidotdev/usehooks";
 import { INITIAL_USER_VALUE } from "@/utils/storage_const";
+import { useAddTask } from "@/hooks/useAddTask";
+import useModal from "@/hooks/useModal";
+import { useUpdateTask } from "@/hooks/useUpdateTask";
+import { useDeleteTask } from "@/hooks/useDeleteTask";
+import { useUpdateState } from "@/hooks/useUpdateState";
 
-function Inbox({ getTags, getProjects }) {
-    const [tasks, setTasks] = useState<Task[]>([]);
-    const [isAddModalShown, setIsAddModalShown] = useState(false);
+function Inbox() {
     const [isMenuShown, setIsMenuShown] = useState(false);
-    const [isDetailShown, setIsDetailShown] = useState(false);
     const [isLoading, setIsLoading] = useState(false);
-    const [isConfirmShown, setIsConfirmShown] = useState(false);
-    const [task, setTask] = useState<Task>();
+    const [task, setTask] = useState<Task>({
+        id: "",
+        userID: "",
+        title: "",
+        description: "",
+        time: "",
+        project: "",
+        tags: "",
+        isDone: false,
+        date: "",
+    });
     const [search, setSearch] = useState("");
-    const [originalTasks, setOriginalTasks] = useState<Task[]>([]);
     const [user] = useSessionStorage("user", INITIAL_USER_VALUE);
-    const { data } = useGetTasks(user.id, {
+    const { data: tasks, refetch: refetchTasks, isLoading: taskIsLoading } = useGetTasks(user.id, {
         queryKey: ["tasks", user.id],
         staleTime: 1000 * 60 * 5
     });
+    const { mutate: addTask } = useAddTask({
+        onSuccess: () => {
+            refetchTasks();
+        },
+        onError: (error) => {
+            if (error.response?.status === 409) {
+                alert(error.response.data.message);
+            }
+        },
+        onSettled: () => {
+            closeAddTaskModal();
+        }
+    });
+    const {
+        open: openAddTaskModal,
+        close: closeAddTaskModal,
+        Modal: AddTaskModal
+    } = useModal({ children: AddTask });
 
-    const getTasks = () => {
-        setIsLoading(true);
-        axios.get(`http://localhost:3000/tasks/${user.id}`)
-            .then(res => {
-                const sortedTasks = res.data.sort((a: Task, b: Task) => a.time.localeCompare(b.time));
-                setTasks(sortedTasks);
-                setOriginalTasks(sortedTasks);
-            })
-            .finally(() => setIsLoading(false));
-    };
-    const deleteTask = () => {
+    const handleAddTask = (task: AddTaskFormContent) => {
+        addTask({ ...task, isDone: false, userID: user.id });
+    }
+
+    const { mutate: updateTask } = useUpdateTask({
+        onSuccess: () => {
+            refetchTasks();
+        },
+        onError: (error) => {
+            console.log(error);
+        },
+        onSettled: () => {
+            closeTaskDetailModal();
+        }
+    });
+
+    const { mutate: updateState } = useUpdateState({
+        onSuccess: () => {
+            refetchTasks();
+        },
+        onError: (error) => {
+            console.log(error);
+        },
+        onSettled: () => {
+            closeTaskDetailModal();
+        }
+    });
+
+    const handleUpdateState = (task: Task) => {
+        updateState({id: task.id, userID: task.userID, isDone: task.isDone});
+    }
+
+    const {
+        open: openTaskDetailModal,
+        close: closeTaskDetailModal,
+        Modal: TaskDetailModal
+    } = useModal({ children: TaskDetail });
+
+    const handleUpdateTask = (task: Task) => {
+        updateTask(task);
+    }
+
+    const { mutate: deleteTask } = useDeleteTask({
+        onSuccess: () => {
+            refetchTasks();
+            setIsLoading(false);
+        },
+        onError: (error) => {
+            console.log(error);
+        },
+        onSettled: () => {
+            closeDeleteConfirmModal();
+        }
+    })
+
+    const {
+        open: openDeleteConfirmModal,
+        close: closeDeleteConfirmModal,
+        Modal: DeleteConfirmModal
+    } = useModal({ children: DeleteConfirm });
+
+    const handleDeleteTask = () => {
         if (!task) return;
         setIsLoading(true);
-        axios.post("http://localhost:3000/task/delete", {
-            userId: user.id,
-            taskId: task.id
-        })
-            .then(res => {
-                if (res.data.msg) {
-                    getTasks();
-                } else {
-                    console.log(res.data.err);
-                }
-            })
-            .finally(() => {
-                setIsLoading(false);
-                handleConfirmClose();
-            })
+        deleteTask(task.id);
     };
     const handleTaskClick = (task: Task) => {
         setTask(task);
-        handleDetailShow();
+        openTaskDetailModal();
     };
-    const searchTask = () => {
-        const filteredTasks = originalTasks.filter(task => { return task.title.toLowerCase().includes(search.toLowerCase()) });
-        setTasks(filteredTasks);
-    }
-    const handleAddModalShow = () => { setIsAddModalShown(true) };
-    const handleAddModalClose = () => { setIsAddModalShown(false) };
-    const handleDetailShow = () => setIsDetailShown(true);
-    const handleDetailClose = () => setIsDetailShown(false);
-    const handleConfirmShow = (task: Task) => {
-        setTask(task);
-        setIsConfirmShown(true);
-    };
-    const handleConfirmClose = () => setIsConfirmShown(false);
-    useEffect(() => {
-        getTasks();
-    }, []);
     return (
         <>
-            {isLoading && <LoadingPage />}
-            {isConfirmShown && <DeleteConfirm type="task" handleClose={handleConfirmClose} handleDelete={deleteTask} />}
+            {(isLoading || taskIsLoading) && <LoadingPage />}
+            <DeleteConfirmModal type="task" onConfirm={handleDeleteTask} />
             <div className="page-container" onClick={() => setIsMenuShown(false)}>
-                {isDetailShown && <TaskDetail getTasks={getTasks} selectedTask={task} handleClose={handleDetailClose} getProjects={getProjects} getTags={getTags}/>}
-                {isAddModalShown && <AddTask getTasks={getTasks} handleClose={handleAddModalClose} getProjects={getProjects} getTags={getTags}/>}
-                <Header getProjects={getProjects} getTags={getTags} isMenuShown={isMenuShown} setIsMenuShown={setIsMenuShown} />
+                <TaskDetailModal selectedTask={task} onConfirm={handleUpdateTask} />
+                <AddTaskModal onConfirm={handleAddTask} />
+                <Header isMenuShown={isMenuShown} setIsMenuShown={setIsMenuShown} />
                 <div className="main-container">
                     <div className="d-flex justify-content-between">
                         <h2 className="page-title">Inbox</h2>
                         <div className="search-bar-container">
                             <input className="search-bar" type="text" name="title" id="search-text" placeholder="Search" value={search} onChange={(e) => setSearch(e.target.value)} />
-                            <button className="search-btn" onClick={searchTask} />
+                            <button className="search-btn" />
                         </div>
                     </div>
-                    <div className="add-task-btn" onClick={handleAddModalShow}>+ Click here to add tasks</div>
-                    {data ?
+                    <div className="add-task-btn" onClick={openAddTaskModal}>+ Click here to add tasks</div>
+                    {tasks ?
                         <div className="tasks-container">
-                            {data.map(task => {
+                            {tasks.map(task => {
                                 return (
-                                    <TaskCard key={task.id} task={task} getTasks={getTasks} handleClick={handleTaskClick} handleDelete={handleConfirmShow} />
+                                    <TaskCard key={task.id} task={task} handleUpdateState={handleUpdateState} handleClick={handleTaskClick} handleDelete={openDeleteConfirmModal} />
                                 )
                             })}
                         </div>

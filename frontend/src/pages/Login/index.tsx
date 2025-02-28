@@ -7,7 +7,6 @@ import IMAGES from "@/assets/images/images";
 import axios from "axios";
 
 function Login() {
-    axios.defaults.withCredentials = true;
     const [user, setUser] = useState({
         email: "",
         password: ""
@@ -22,7 +21,6 @@ function Login() {
             password: user.password
         }, { withCredentials: true })
             .then(res => {
-                console.log(res.data);
                 if (res.data.msg.startsWith("Welcome")) {
                     window.location.href = "/";
                 } else if (res.data.msg.startsWith("Wrong")) {

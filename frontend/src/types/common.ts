@@ -13,21 +13,25 @@ export interface UserEntity {
 
 export interface Task {
     id: string;
+    userID: string;
     title: string;
     project: string;
     description: string;
     isDone: boolean;
     tags: string;
-    date: string;
+    date: string | null;
     time: string;
 }
 
 export interface Tag {
     id: string;
+    userID: string;
     name: string;
 }
 
 export interface Project{
     id: string;
+    userID: string;
     name: string;
 }
+
