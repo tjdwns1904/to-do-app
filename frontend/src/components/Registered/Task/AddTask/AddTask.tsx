@@ -1,5 +1,4 @@
-import axios from "axios";
-import { MouseEvent, ChangeEvent, useEffect, useRef, useState } from "react";
+import { MouseEvent, ChangeEvent, useRef, useState } from "react";
 import { Form } from "react-bootstrap";
 import AddForm from "@/components/Registered/Form/AddForm";
 import LoadingPage from "@/pages/LoadingPage";
@@ -7,41 +6,84 @@ import { useGetTags } from "@/hooks/useGetTags";
 import { useGetProjects } from "@/hooks/useGetProjects";
 import { useSessionStorage } from "@uidotdev/usehooks";
 import { INITIAL_USER_VALUE } from "@/utils/storage_const";
+import useModal from "@/hooks/useModal";
+import { useAddProject } from "@/hooks/useAddProject";
+import { useAddTag } from "@/hooks/useAddTag";
 
-interface TaskFormContent {
+interface Props {
+    onCloseModal: () => void,
+    onConfirm: (task: AddTaskFormContent) => void
+}
+
+export interface AddTaskFormContent {
     title: string;
     description: string;
     time: string;
     date: string | null;
     project: string;
+    tags: string;
 }
 
-function AddTask({ handleClose, getTasks, getTags, getProjects }) {
+function AddTask({ onCloseModal, onConfirm }: Props) {
     const time = useRef("");
     const date = useRef("");
-    const [task, setTask] = useState<TaskFormContent>({
+    const [task, setTask] = useState<AddTaskFormContent>({
         title: "",
         description: "",
         time: "",
         date: "",
-        project: ""
+        project: "",
+        tags: ""
     });
     const [userTags, setUserTags] = useState<string[]>([]);
     const [selected, setSelected] = useState("");
     const [isValid, setIsValid] = useState(true);
-    const [isAddModalShown, setIsAddModalShown] = useState(false);
     const [isLoading, setIsLoading] = useState(false);
     const [user] = useSessionStorage("user", INITIAL_USER_VALUE);
-    const { data: tags } = useGetTags(user.id, {
+    const { data: tags, refetch: refetchTags } = useGetTags(user.id, {
         queryKey: ["tags", user.id],
         staleTime: 1000 * 60 * 5
     });
-    const { data: projects } = useGetProjects(user.id, {
+    const { data: projects, refetch: refetchProjects } = useGetProjects(user.id, {
         queryKey: ["projects", user.id],
         staleTime: 1000 * 60 * 5
     });
-    const handleAddModalClose = () => setIsAddModalShown(false);
-    const handleAddModalShow = () => setIsAddModalShown(true);
+    const { mutate: addProject } = useAddProject({
+        onSuccess: () => {
+            refetchProjects();
+        },
+        onError: (error) => {
+            console.log(error);
+        },
+        onSettled: () => {
+            closeAddFormModal();
+        }
+    });
+
+    const { mutate: addTag } = useAddTag({
+        onSuccess: () => {
+            refetchTags();
+        },
+        onError: (error) => {
+            console.log(error);
+        },
+        onSettled: () => {
+            closeAddFormModal();
+        }
+    });
+
+    const {
+        open: openAddFormModal,
+        close: closeAddFormModal,
+        Modal: AddFormModal
+    } = useModal({ children: AddForm });
+    const handleAddItem = (item: string) => {
+        if (selected === "tag") {
+            addTag({ name: item, userID: user.id });
+        } else if (selected === "project") {
+            addProject({ name: item, userID: user.id });
+        }
+    }
     const handleChange = (e: ChangeEvent<HTMLInputElement | HTMLTextAreaElement>) => {
         const { name, value } = e.target;
         setTask(prev => {
@@ -53,7 +95,7 @@ function AddTask({ handleClose, getTasks, getTags, getProjects }) {
             );
         });
     }
-    const addTag = (e: MouseEvent<HTMLParagraphElement>) => {
+    const addTaskTag = (e: MouseEvent<HTMLParagraphElement>) => {
         const { id } = e.currentTarget;
         if (!userTags.includes(id)) { setUserTags([...userTags, id]); }
     }
@@ -71,32 +113,6 @@ function AddTask({ handleClose, getTasks, getTags, getProjects }) {
     const removeProject = () => {
         setTask({ ...task, project: "" });
     }
-    const addTask = () => {
-        if (task.title !== "" && task.time !== "") {
-            setIsLoading(true);
-            setIsValid(true);
-            axios.post("http://localhost:3000/task/add", {
-                id: user.id,
-                task: task,
-                tags: JSON.stringify(userTags)
-            })
-                .then(res => {
-                    if (res.data.msg) {
-                        if (res.data.msg.endsWith("successfully!")) {
-                            handleClose();
-                            getTasks();
-                        } else {
-                            alert(res.data.msg);
-                        }
-                    } else {
-                        console.log(res.data.err);
-                    }
-                })
-                .finally(() => setIsLoading(false));
-        } else {
-            setIsValid(false);
-        }
-    };
     const handleSelect = (e: MouseEvent<HTMLButtonElement>) => {
         const { id } = e.currentTarget;
         if (id !== selected) {
@@ -119,15 +135,20 @@ function AddTask({ handleClose, getTasks, getTags, getProjects }) {
         }
         handleSelectionClose();
     };
-    useEffect(() => {
-        getProjects();
-        getTags();
-    }, []);
+    const handleAddTask = () => {
+        if (task.title !== "" && task.time !== "") {
+            setIsLoading(true);
+            setIsValid(true);
+            onConfirm({ ...task, tags: JSON.stringify(userTags) });
+        } else {
+            setIsValid(false);
+        }
+    }
     return (
         <>
             {isLoading && <LoadingPage />}
-            {isAddModalShown && <AddForm type={selected} user={user} getProjects={getProjects} getTags={getTags} handleClose={handleAddModalClose} />}
-            <div className="background" onClick={handleClose}>
+            <AddFormModal type={selected} onConfirm={handleAddItem} />
+            <div className="background" onClick={onCloseModal}>
             </div>
             <div className="modal-container">
                 <h2>Add Task</h2>
@@ -177,8 +198,7 @@ function AddTask({ handleClose, getTasks, getTags, getProjects }) {
                                 onClick={(e) => {
                                     e.preventDefault();
                                     handleSelect(e);
-                                }
-                                }
+                                }}
                             />
                         </div>
                     </div>
@@ -205,10 +225,10 @@ function AddTask({ handleClose, getTasks, getTags, getProjects }) {
                                     <button className="delete-btn" onClick={handleSelectionClose} />
                                     {tags && tags.length !== 0 && tags.map(tag => {
                                         return (
-                                            <p key={tag.id} id={tag.name} className="option-item" onClick={(e) => addTag(e)}>{tag.name}</p>
+                                            <p key={tag.id} id={tag.name} className="option-item" onClick={(e) => addTaskTag(e)}>{tag.name}</p>
                                         )
                                     })}
-                                    <p className="option-item text-success" onClick={handleAddModalShow}>+ Add new tag</p>
+                                    <p className="option-item text-success" onClick={openAddFormModal}>+ Add new tag</p>
                                 </div>
                             }
                             {selected === "project" &&
@@ -220,7 +240,7 @@ function AddTask({ handleClose, getTasks, getTags, getProjects }) {
                                             <p key={project.id} id={project.name} className="option-item" onClick={(e) => setProject(e)}>{project.name}</p>
                                         )
                                     })}
-                                    <p className="option-item text-success" onClick={handleAddModalShow}>+ Add new project</p>
+                                    <p className="option-item text-success" onClick={openAddFormModal}>+ Add new project</p>
                                 </div>
                             }
                         </div>
@@ -229,11 +249,11 @@ function AddTask({ handleClose, getTasks, getTags, getProjects }) {
                         {!isValid && <p className="text-danger">Please enter the task name and its due date.</p>}
                         <button className="add-btn me-1" onClick={(e) => {
                             e.preventDefault();
-                            addTask();
+                            handleAddTask();
                         }}>Add task</button>
                         <button className="cancel-btn" onClick={(e) => {
                             e.preventDefault();
-                            handleClose();
+                            onCloseModal();
                         }}>Cancel</button>
                     </div>
                 </Form>

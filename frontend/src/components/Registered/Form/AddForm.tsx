@@ -1,64 +1,32 @@
-import axios from "axios";
 import { ChangeEvent, useState } from "react";
 import { Form } from "react-bootstrap";
 import LoadingPage from "@/pages/LoadingPage";
-import { useSessionStorage } from "@uidotdev/usehooks";
-import { INITIAL_USER_VALUE } from "@/utils/storage_const";
 
-function AddForm({ type, getTags, getProjects, handleClose }
-    :
-    {
-        type: string,
-    }) {
+interface Props {
+    type: string;
+    onCloseModal: () => void;
+    onConfirm: (item: string) => void;
+}
+
+function AddForm({ type, onCloseModal, onConfirm }: Props) {
     const [name, setName] = useState("");
     const [isValid, setIsValid] = useState(true);
     const [isLoading, setIsLoading] = useState(false);
-    const [user] = useSessionStorage("user", INITIAL_USER_VALUE);
-    const addData = () => {
+    const handleConfirm = () => {
         if (name !== "") {
             setIsLoading(true);
             setIsValid(true);
-            if (type === "tag") {
-                axios.post("http://localhost:3000/tag/add", {
-                    id: user.id,
-                    tag: name
-                })
-                    .then(res => {
-                        if (res.data.msg) {
-                            handleClose();
-                            getTags();
-                        } else {
-                            console.log(res.data.err);
-                        }
-                    })
-                    .finally(() => setIsLoading(false));
-            } else {
-                axios.post("http://localhost:3000/project/add", {
-                    id: user.id,
-                    project: name
-                })
-                    .then(res => {
-                        if (res.data.msg) {
-                            handleClose();
-                            getProjects();
-                        } else {
-                            console.log(res.data.err);
-                        }
-                    })
-                    .finally(() => setIsLoading(false));
-            }
+            onConfirm(name);
         } else {
             setIsValid(false);
         }
-    };
-
-    const handleChange = (e: ChangeEvent<HTMLInputElement | HTMLTextAreaElement>) => {
-        setName(e.target.value);
     }
+    const handleChange = (e: ChangeEvent<HTMLInputElement | HTMLTextAreaElement>) => setName(e.target.value);
+
     return (
         <>
             {isLoading && <LoadingPage />}
-            <div className="background upper-layer" onClick={handleClose}>
+            <div className="background upper-layer" onClick={onCloseModal}>
             </div>
             <div className="modal-container upper-layer">
                 <h2>Add {type}</h2>
@@ -68,9 +36,9 @@ function AddForm({ type, getTags, getProjects, handleClose }
                         {!isValid && <p className="text-danger">Please enter a name.</p>}
                         <button className="add-btn me-1" onClick={(e) => {
                             e.preventDefault();
-                            addData();
+                            handleConfirm();
                         }}>Add {type}</button>
-                        <button className="cancel-btn" onClick={handleClose}>Cancel</button>
+                        <button className="cancel-btn" onClick={onCloseModal}>Cancel</button>
                     </div>
                 </Form>
             </div>
