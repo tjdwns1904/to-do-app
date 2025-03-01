@@ -1,27 +1,42 @@
-import { ChangeEvent, MouseEvent, useState } from "react";
+import { MouseEvent, useState } from "react";
 import Header from "@/components/Common/Header";
 import { Button, Form } from "react-bootstrap";
-import { Link } from "react-router-dom";
+import { Link, useNavigate } from "react-router-dom";
 import Footer from "@/components/Common/Footer";
 import IMAGES from "@/assets/images/images";
+import { useSignup } from "@/services/useSignup";
+import { z } from 'zod';
+import { useForm } from 'react-hook-form';
+import { zodResolver } from '@hookform/resolvers/zod';
 
+const EMAIL_FORMAT = /^\w+([\.-]?\w+)*@\w+([\.-]?\w+)*(\.\w{2,3})+$/;
+const PASSWORD_FORMAT = /^(?=.*[a-z])(?=.*[A-Z])(?=.*[@$!%^*?#&])[A-Za-z\d@$!%^*?#&]{8,}$/;
+
+const schema = z.object({
+    name: z.string()
+        .min(1, "Please enter a valid name"),
+    username: z.string()
+        .min(1, "Please enter a valid username"),
+    email: z.string()
+        .min(1, "Please enter a valid email address")
+        .regex(EMAIL_FORMAT, "Please enter a valid email address"),
+    password: z.string()
+        .regex(PASSWORD_FORMAT, "Please enter a valid password"),
+    passwordConfirm: z.string()
+}).refine(schema => schema.password === schema.passwordConfirm, {
+    message: "Passwords don't match",
+    path: ["passwordConfirm"]
+});
+
+export type SignupForm = z.infer<typeof schema>;
 
 function Signup() {
-    const [user, setUser] = useState({
-        name: "",
-        username: "",
-        email: "",
-        password: ""
-    });
-    const [confirmPassword, setConfirmPassword] = useState("");
+    const { register, handleSubmit, formState: { errors } } = useForm({
+        resolver: zodResolver(schema)
+    })
+    const navigate = useNavigate();
     const [showPassword, setShowPassword] = useState(false);
     const [showCPassword, setShowCPassword] = useState(false);
-    const [isDisabled, setIsDisabled] = useState(false);
-    const [nameIsValid, setNameIsValid] = useState(true);
-    const [userNameIsValid, setUserNameIsValid] = useState(true);
-    const [emailIsValid, setEmailIsValid] = useState(true);
-    const [passwordIsValid, setPasswordIsValid] = useState(true);
-    const [passwordIsMatch, setPasswordIsMatch] = useState(true);
     const toggleShow = (e: MouseEvent<HTMLButtonElement>) => {
         const { id } = e.currentTarget;
         if (id === "p") {
@@ -30,72 +45,22 @@ function Signup() {
             setShowCPassword(prev => !prev);
         }
     };
-    const handleChange = (e: ChangeEvent<HTMLInputElement | HTMLTextAreaElement>) => {
-        const { name, value } = e.target;
-        setUser(prev => {
-            return (
-                {
-                    ...prev,
-                    [name]: value
-                }
-            );
-        });
-    };
-    const registerAccount = () => {
-        fetch("http://localhost:3000/auth/register", {
-            method: "POST",
-            headers: {
-                'Content-Type': 'application/json'
-            },
-            body: JSON.stringify(user)
-        })
-            .then(res => res.json())
-            .then(res => {
-                console.log(res);
-                if (res.msg === "Registered successfully!") {
-                    alert(res.msg);
-                    window.location.href = "/login";
-                }else{
-                    alert(res.msg);
-                }
-            }
-            );
-    }
-    const validation = () => {
-        setIsDisabled(true);
-        setEmailIsValid(true);
-        setPasswordIsMatch(true);
-        setPasswordIsValid(true);
-        if (user.email !== "" || user.name !== "" || user.password !== "" || user.username !== "" || confirmPassword !== "") {
-            if (user.name !== "") {
-                setNameIsValid(true);
-                if (user.username !== "") {
-                    setUserNameIsValid(true);
-                    const emailFormat = /^\w+([\.-]?\w+)*@\w+([\.-]?\w+)*(\.\w{2,3})+$/;
-                    if (user.email !== "" && user.email.match(emailFormat)) {
-                        setEmailIsValid(true);
-                        const pwFormat = /^(?=.*[a-z])(?=.*[A-Z])(?=.*[@$!%^*?#&])[A-Za-z\d@$!%^*?#&]{8,}$/;
-                        if (user.password !== "" && user.password.match(pwFormat)) {
-                            if (user.password !== confirmPassword) {
-                                setPasswordIsMatch(false);
-                            } else {
-                                setPasswordIsMatch(true);
-                                registerAccount();
-                            }
-                        } else {
-                            setPasswordIsValid(false);
-                        }
-                    } else {
-                        setEmailIsValid(false);
-                    }
-                }
+    const { mutate: signup } = useSignup({
+        onSuccess: (data) => {
+            if (data.msg === "Registered successfully!") {
+                alert(data.msg);
+                navigate("/login", { replace: true });
             } else {
-                setNameIsValid(false);
+                alert(data.msg);
             }
-        } else {
-            setNameIsValid(false);
+        },
+        onError: () => {
+            console.log("Error");
         }
-        setIsDisabled(false);
+    })
+    const registerAccount = (user: SignupForm) => {
+        console.log(user);
+        signup(user);
     }
     return (
         <>
@@ -105,88 +70,79 @@ function Signup() {
                     <h2>Sign Up</h2>
                     <hr className="mb-4" />
                     <div className="row">
-                        <Form className="login-form col-md-6">
+                        <Form className="login-form col-md-6" onSubmit={handleSubmit(registerAccount)}>
                             <Form.Group className="mb-3">
                                 <Form.Label>Name</Form.Label>
                                 <Form.Control
                                     required
-                                    name="name"
-                                    className={nameIsValid ? "" : "invalid-input"}
+                                    className={errors.name ? "invalid-input" : ""}
                                     type="text"
                                     placeholder="Jack"
                                     autoComplete="off"
-                                    onChange={(e) => handleChange(e)}
+                                    {...register("name")}
                                 />
-                                {!nameIsValid && <p className="text-danger error-msg">Please enter a valid name</p>}
+                                {errors.name && <p className="text-danger error-msg">{errors.name.message}</p>}
                             </Form.Group>
                             <Form.Group className="mb-3">
                                 <Form.Label>Username</Form.Label>
                                 <Form.Control
                                     required
-                                    name="username"
-                                    className={userNameIsValid ? "" : "invalid-input"}
+                                    className={errors.username ? "invalid-input" : ""}
                                     type="text"
                                     placeholder="dlwl33"
                                     autoComplete="off"
-                                    onChange={(e) => handleChange(e)}
+                                    {...register("username")}
                                 />
-                                {!userNameIsValid && <p className="text-danger error-msg">Please enter a valid username</p>}
+                                {errors.username && <p className="text-danger error-msg">{errors.username.message}</p>}
                             </Form.Group>
                             <Form.Group className="mb-3">
                                 <Form.Label>Email</Form.Label>
                                 <Form.Control
                                     required
-                                    name="email"
-                                    className={emailIsValid ? "" : "invalid-input"}
+                                    className={errors.email ? "invalid-input" : ""}
                                     type="email"
                                     placeholder="asd123@gmail.com"
                                     autoComplete="off"
-                                    onChange={(e) => handleChange(e)}
+                                    {...register("email")}
                                 />
-                                {!emailIsValid && <p className="text-danger error-msg">Please enter a valid email address</p>}
+                                {errors.email && <p className="text-danger error-msg">{errors.email.message}</p>}
                             </Form.Group>
                             <Form.Group className="mb-3">
                                 <Form.Label>Password</Form.Label>
                                 <div className="password-container">
                                     <Form.Control
                                         required
-                                        name="password"
-                                        className={passwordIsValid ? "" : "invalid-input"}
+                                        className={errors.password ? "invalid-input" : ""}
                                         placeholder="Password"
                                         type={showPassword ? "text" : "password"}
-                                        onChange={(e) => handleChange(e)}
+                                        {...register("password")}
                                     />
                                     <Button id="p" className={showPassword ? "passwordShown" : "passwordHidden"} onClick={(e) => toggleShow(e)} />
                                 </div>
                                 <Form.Text className="text-secondary">Password must contain 1 capital letter, 1 special character and, longer than 8 words</Form.Text>
-                                {!passwordIsValid && <p className="text-danger error-msg">Please enter a valid password</p>}
+                                {errors.password && <p className="text-danger error-msg">{errors.password.message}</p>}
                             </Form.Group>
                             <Form.Group className="mb-5">
                                 <Form.Label>Confirm Password</Form.Label>
                                 <div className="password-container">
                                     <Form.Control
                                         required
-                                        name="cPassword"
                                         placeholder="Confirm Password"
-                                        className={passwordIsMatch ? "" : "invalid-input"}
+                                        className={errors.passwordConfirm ? "invalid-input" : ""}
                                         type={showCPassword ? "text" : "password"}
-                                        onChange={(e) => setConfirmPassword(e.target.value)}
+                                        {...register("passwordConfirm")}
                                     />
                                     <Button id="c" className={showCPassword ? "passwordShown" : "passwordHidden"} onClick={(e) => toggleShow(e)} />
                                 </div>
-                                {!passwordIsMatch && <p className="text-danger error-msg">Passwords don't match</p>}
+                                {errors.passwordConfirm && <p className="text-danger error-msg">{errors.passwordConfirm.message}</p>}
                             </Form.Group>
-                            {isDisabled ?
-                                <Button className="mb-2 disabled-btn">Sign up</Button>
-                                :
-                                <Button className="mb-2" onClick={validation}>Sign up</Button>
-                            }
+                            <Button className="mb-2" type="submit">Sign up</Button>
                             <p className="mb-5 other-link">Already signed up? <Link to={"/login"}>Log in</Link> here!</p>
                         </Form>
                         <div className="col-md-6 mt-4 easy-login-btn-group">
-                            <Link className="col-md-12 mb-4"><img src={IMAGES.fb} alt="" />Continue with Facebook</Link>
-                            <Link className="col-md-12 mb-4"><img src={IMAGES.fb} alt="" />Continue with Facebook</Link>
-                            <Link className="col-md-12 mb-4"><img src={IMAGES.fb} alt="" />Continue with Facebook</Link>
+                            <Button className="col-md-12 mb-4"><img src={IMAGES.fb} alt="" />Continue with Facebook</Button>
+                            <Button className="col-md-12 mb-4"><img src={IMAGES.fb} alt="" />Continue with Facebook</Button>
+                            <Button className="col-md-12 mb-4"><img src={IMAGES.fb} alt="" />Continue with Facebook</Button>
                         </div>
                     </div>
                 </div>

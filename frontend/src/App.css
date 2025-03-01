@@ -466,7 +466,7 @@ textarea {
     color: #4e4e4e;
 }
 
-.easy-login-btn-group a {
+.easy-login-btn-group button {
     background-color: #fff;
     color: #000;
     font-weight: bold;
@@ -485,7 +485,7 @@ textarea {
     }
 }
 
-.easy-login-btn-group a img {
+.easy-login-btn-group button img {
     width: 40px;
     padding-right: 10px;
     margin-bottom: 3px;
