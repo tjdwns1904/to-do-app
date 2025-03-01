@@ -8,7 +8,7 @@ function Footer() {
                     <img className="logo" src={IMAGES.logo} alt="" />
                     <h2>TodoList</h2>
                 </div>
-                <p>Join millions of people who organize<br /> work and life with Todoist.</p>
+                <p>Join millions of people who organize<br /> work and life with TodoList.</p>
                 <div className="footer-subcontainer">
                     <p>Security</p>
                     <p className="privacy">Privacy</p>

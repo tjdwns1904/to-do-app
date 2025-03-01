@@ -1,16 +1,24 @@
 import { useState } from "react";
-import { NavLink } from "react-router-dom";
+import { NavLink, useNavigate } from "react-router-dom";
 import IMAGES from "@/assets/images/images";
 import CustomContextMenu from "./ContextMenu/CustomContextMenu";
-import axios from "axios";
 import DeleteConfirm from "./Task/DeleteTask/DeleteConfirm";
-import LoadingPage from "@/pages/LoadingPage";
 import { useGetTags } from "@/hooks/useGetTags";
 import { useGetProjects } from "@/hooks/useGetProjects";
 import { useSessionStorage } from "@uidotdev/usehooks";
 import { INITIAL_USER_VALUE } from "@/utils/storage_const";
+import useModal from "@/hooks/useModal";
+import { useDeleteProject } from "@/hooks/useDeleteProject";
+import { useDeleteTag } from "@/hooks/useDeleteTag";
+import { useLogout } from "../../services/useLogout";
+import { useQueryClient } from "@tanstack/react-query";
 
-function Header({ getProjects, getTags, isMenuShown, setIsMenuShown }) {
+interface Props {
+    isMenuShown: boolean;
+    setIsMenuShown: (isShown: boolean) => void;
+}
+
+function Header({ isMenuShown, setIsMenuShown }: Props) {
     const [point, setPoint] = useState({
         x: 0,
         y: 0
@@ -19,82 +27,72 @@ function Header({ getProjects, getTags, isMenuShown, setIsMenuShown }) {
         type: "",
         name: ""
     });
+    const navigate = useNavigate();
+    const queryClient = useQueryClient();
     const [isProjectCollapsed, setIsProjectCollapsed] = useState(false);
     const [isTagCollapsed, setIsTagCollapsed] = useState(false);
-    const [isShown, setIsShown] = useState(false);
-    const [isLoading, setIsLoading] = useState(false);
-    const handleShow = () => setIsShown(true);
-    const handleClose = () => setIsShown(false);
     const handleProjectToggle = () => setIsProjectCollapsed(prev => !prev);
     const handleTagToggle = () => setIsTagCollapsed(prev => !prev);
     const [user] = useSessionStorage("user", INITIAL_USER_VALUE);
-    const { data: tags } = useGetTags(user.id, {
+    const [_, setUser] = useSessionStorage("user", INITIAL_USER_VALUE);
+    const { data: tags, refetch: refetchTags } = useGetTags(user.id, {
         queryKey: ["tags", user.id],
         staleTime: 1000 * 60 * 5,
     });
-    const { data: projects } = useGetProjects(user.id, {
+    const { data: projects, refetch: refetchProjects } = useGetProjects(user.id, {
         queryKey: ["projects", user.id],
         staleTime: 1000 * 60 * 5
     });
-    const logout = () => {
-        fetch('http://localhost:3000/auth/logout', {
-            method: "GET",
-            credentials: "include",
-            headers: {
-                'Content-Type': 'application/json'
-            }
-        })
-            .then(res => res.json())
-            .then(res => {
-                if (res.msg === "Logged out succesfully!") {
-                    window.location.href = "/";
-                }
-            })
-    }
-    const handleDelete = () => {
-        setIsLoading(true);
-        if (selected.type === "tag") {
-            axios.post("http://localhost:3000/tag/delete", {
-                userId: user.id,
-                tag: selected.name
-            })
-                .then(res => {
-                    if (res.data.msg) {
-                        alert(res.data.msg);
-                        getTags();
-                    } else {
-                        console.log(res.data.err);
-                    }
-                })
-                .finally(() => {
-                    setIsLoading(false);
-                    setIsMenuShown(false);
-                    handleClose();
-                })
-        } else {
-            axios.post("http://localhost:3000/project/delete", {
-                userId: user.id,
-                project: selected.name
-            })
-                .then(res => {
-                    if (res.data.msg) {
-                        alert(res.data.msg);
-                        getProjects();
-                    } else {
-                        console.log(res.data.err);
-                    }
-                })
-                .finally(() => {
-                    setIsLoading(false);
-                    setIsMenuShown(false);
-                    handleClose();
-                })
+    const { mutate: logout } = useLogout({
+        onSuccess: () => {
+            queryClient.clear();
+            setUser(INITIAL_USER_VALUE);
+            navigate("/", { replace: true });
+        },
+        onError: (error) => {
+            console.log(error);
+        },
+    })
+    const {
+        open: openDeleteConfirmModal,
+        close: closeDeleteConfirmModal,
+        Modal: DeleteConfirmModal
+    } = useModal({ children: DeleteConfirm });
+    const { mutate: deleteProject } = useDeleteProject({
+        onSuccess: () => {
+            refetchProjects();
+        },
+        onError: (error) => {
+            console.log(error);
+        },
+        onSettled: () => {
+            closeDeleteConfirmModal();
         }
+    });
+    const { mutate: deleteTag } = useDeleteTag({
+        onSuccess: () => {
+            refetchTags();
+        },
+        onError: (error) => {
+            console.log(error);
+        },
+        onSettled: () => {
+            closeDeleteConfirmModal();
+        }
+    });
+    const handleDeleteItem = () => {
+        if (selected.type === "tag") {
+            deleteTag({ userID: user.id, name: selected.name });
+        } else if (selected.type === "project") {
+            deleteProject({ userID: user.id, name: selected.name });
+        }
+    }
+    const handleLogout = () => {
+        logout();
     }
     return (
         <>
-            {isLoading && <LoadingPage />}
-            {isShown && <DeleteConfirm handleClose={handleClose} handleDelete={handleDelete} type={selected.type} />}
+            <DeleteConfirmModal onConfirm={handleDeleteItem} type={selected.type} />
             <div className="user-header-container" onClick={() => setIsMenuShown(false)}>
                 <div>
                     <div className="profile-container">
@@ -144,9 +142,9 @@ function Header({ getProjects, getTags, isMenuShown, setIsMenuShown }) {
                             })}
                         </div>
                     }
-                    {isMenuShown && <CustomContextMenu point={point} selected={selected} handleShow={handleShow} />}
+                    {isMenuShown && <CustomContextMenu point={point} handleShow={openDeleteConfirmModal} />}
                 </div>
-                <button className="signout-btn" onClick={logout}>Sign out</button>
+                <button className="signout-btn" onClick={handleLogout}>Sign out</button>
             </div>
         </>
     )

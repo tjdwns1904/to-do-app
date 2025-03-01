@@ -4,4 +4,5 @@ export const INITIAL_USER_VALUE = {
     email: "",
     password: "",
     name: "",
+    isLoggedIn: false,
 }
