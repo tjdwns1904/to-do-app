@@ -1,5 +1,5 @@
 import { ErrorInformation } from "@/types/error";
-import { TaskPayload } from "@/types/Payload";
+import { TaskPayload } from "@/types/payload";
 import { axiosInstance } from "@/utils/axios";
 import { useMutation, UseMutationOptions } from "@tanstack/react-query";
 import { AxiosError } from "axios";

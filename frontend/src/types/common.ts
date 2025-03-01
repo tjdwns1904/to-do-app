@@ -19,7 +19,7 @@ export interface Task {
     description: string;
     isDone: boolean;
     tags: string;
-    date: string | null;
+    date: string;
     time: string;
 }
 

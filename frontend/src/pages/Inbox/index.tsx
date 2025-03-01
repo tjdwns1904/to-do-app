@@ -1,7 +1,7 @@
 import { useState } from "react";
 import Header from "@/components/Registered/Header";
 import TaskCard from "@/components/Registered/Task/ViewTask/TaskCard";
-import AddTask, { AddTaskFormContent } from "@/components/Registered/Task/AddTask/AddTask";
+import AddTask, { AddTaskForm } from "@/components/Registered/Task/AddTask/AddTask";
 import TaskDetail from "@/components/Registered/Task/ViewTask/TaskDetail";
 import LoadingPage from "../LoadingPage";
 import DeleteConfirm from "@/components/Registered/Task/DeleteTask/DeleteConfirm";
@@ -55,7 +55,7 @@ function Inbox() {
         Modal: AddTaskModal
     } = useModal({ children: AddTask });
 
-    const handleAddTask = (task: AddTaskFormContent) => {
+    const handleAddTask = (task: AddTaskForm) => {
         addTask({ ...task, isDone: false, userID: user.id });
     }
 
@@ -116,6 +116,11 @@ function Inbox() {
         Modal: DeleteConfirmModal
     } = useModal({ children: DeleteConfirm });
 
+    const handleOpenDeleteConfirmModal = (task: Task) => {
+        setTask(task);
+        openDeleteConfirmModal();
+    }
+
     const handleDeleteTask = () => {
         if (!task) return;
         setIsLoading(true);
@@ -146,7 +151,7 @@ function Inbox() {
                         <div className="tasks-container">
                             {tasks.map(task => {
                                 return (
-                                    <TaskCard key={task.id} task={task} handleUpdateState={handleUpdateState} handleClick={handleTaskClick} handleDelete={openDeleteConfirmModal} />
+                                    <TaskCard key={task.id} task={task} handleUpdateState={handleUpdateState} handleClick={handleTaskClick} handleDelete={handleOpenDeleteConfirmModal} />
                                 )
                             })}
                         </div>

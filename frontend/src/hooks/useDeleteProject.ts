@@ -1,5 +1,5 @@
 import { ErrorInformation } from "@/types/error";
-import { ProjectPayload } from "@/types/Payload";
+import { ProjectPayload } from "@/types/payload";
 import { axiosInstance } from "@/utils/axios";
 import { useMutation, UseMutationOptions } from "@tanstack/react-query";
 import { AxiosError } from "axios";
