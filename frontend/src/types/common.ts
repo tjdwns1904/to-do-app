@@ -29,7 +29,7 @@ export interface Tag {
     name: string;
 }
 
-export interface Project{
+export interface Project {
     id: string;
     userID: string;
     name: string;

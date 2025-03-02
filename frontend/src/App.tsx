@@ -8,6 +8,11 @@ import NotFound from './pages/NotFound';
 import { useSessionStorage } from '@uidotdev/usehooks'
 import { INITIAL_USER_VALUE } from './utils/storage_const'
 import { QueryClient, QueryClientProvider } from '@tanstack/react-query'
+import { Suspense } from 'react'
+import LoadingPage from './pages/LoadingPage'
+import Today from './pages/Today'
+import Upcoming from './pages/Upcoming'
+import FilteredTask from './pages/FilteredTask'
 
 const queryClient = new QueryClient();
 const InnerApp = () => {
@@ -19,9 +24,9 @@ const InnerApp = () => {
           {<Route path='/' element={user?.isLoggedIn ? <Inbox /> : <Home />} />}
           {!user?.isLoggedIn && <Route path='/login' element={<Login />} />}
           {!user?.isLoggedIn && <Route path='/signup' element={<Signup />} />}
-          {/* {user?.isLoggedIn && <Route path='/today' element={<Today/>} />}
-            {user?.isLoggedIn && <Route path='/upcoming' element={<Upcoming/>} />} */}
-          {/* {isLoggedIn && <Route path='/filter/:type/:name' element={<FilteredTask user={user} tags={tags} projects={projects} getProjects={getProjects} getTags={getTags} />} />} */}
+          {user?.isLoggedIn && <Route path='/today' element={<Today />} />}
+          {user?.isLoggedIn && <Route path='/upcoming' element={<Upcoming />} />}
+          {user?.isLoggedIn && <Route path='/:type/:name' element={<FilteredTask />} />}
           <Route path='*' element={<NotFound />} />
         </Routes>
       </BrowserRouter>
@@ -31,7 +36,9 @@ const InnerApp = () => {
 function App() {
   return (
     <QueryClientProvider client={queryClient}>
-      <InnerApp />
+      <Suspense fallback={<LoadingPage />}>
+        <InnerApp />
+      </Suspense>
     </QueryClientProvider>
   )
 }

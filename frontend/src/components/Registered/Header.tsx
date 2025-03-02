@@ -108,7 +108,7 @@ function Header({ isMenuShown, setIsMenuShown }: Props) {
                             <div className={isProjectCollapsed ? "list-shown" : "list-hidden"} onClick={handleProjectToggle} />
                             {isProjectCollapsed && projects.map(project => {
                                 return (
-                                    <NavLink key={project.id} to={'/filter/project/' + project.name} className={({ isActive }) => (isActive) ? "active sub-list-link list-item" : "sub-list-link list-item"}
+                                    <NavLink key={project.id} to={`/project/${project.name}`} className={({ isActive }) => (isActive) ? "active sub-list-link list-item" : "sub-list-link list-item"}
                                         onContextMenu={(e) => {
                                             e.preventDefault();
                                             setIsMenuShown(true);
@@ -128,7 +128,7 @@ function Header({ isMenuShown, setIsMenuShown }: Props) {
                             <div className={isTagCollapsed ? "list-shown" : "list-hidden"} onClick={handleTagToggle} />
                             {isTagCollapsed && tags.map(tag => {
                                 return (
-                                    <NavLink key={tag.id} to={'/filter/tag/' + tag.name} className={({ isActive }) => (isActive) ? "active sub-list-link list-item" : "sub-list-link list-item"}
+                                    <NavLink key={tag.id} to={`/tag/${tag.name}`} className={({ isActive }) => (isActive) ? "active sub-list-link list-item" : "sub-list-link list-item"}
                                         onContextMenu={(e) => {
                                             e.preventDefault();
                                             setIsMenuShown(true);
