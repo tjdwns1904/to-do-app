@@ -71,43 +71,43 @@ function Login() {
         <>
             <Header />
             <div className="login-container">
-                <div className="col-md-6 login-form-container">
-                    <h2>Welcome!</h2>
+                <div className="col-lg-4 col-md-5 login-form-container">
+                    <h2>Login</h2>
                     <hr className="mb-4" />
-                    <div className="row">
-                        <Form className="col-md-6 login-form" onSubmit={handleSubmit(handleLogin)}>
-                            <Form.Group className="mb-3">
-                                <Form.Label>Email</Form.Label>
+                    <Form className="login-form" onSubmit={handleSubmit(handleLogin)}>
+                        <Form.Group className="mb-3">
+                            <Form.Label>Email</Form.Label>
+                            <Form.Control
+                                required
+                                className={errors.email || !isEmailValid ? "invalid-input" : ""}
+                                type="email"
+                                placeholder="Enter your email..."
+                                {...register("email")}
+                            />
+                            {errors.email && <p className="text-danger error-msg">{errors.email.message}</p>}
+                        </Form.Group>
+                        <Form.Group className="mb-4">
+                            <Form.Label>Password</Form.Label>
+                            <div className="password-container">
                                 <Form.Control
                                     required
-                                    className={errors.email || !isEmailValid ? "invalid-input" : ""}
-                                    type="email"
-                                    placeholder="Enter your email..."
-                                    {...register("email")}
+                                    className={errors.password || !isPasswordValid ? "invalid-input" : ""}
+                                    type={showPassword ? "text" : "password"}
+                                    placeholder="Enter your password..."
+                                    {...register("password")}
                                 />
-                                {errors.email && <p className="text-danger error-msg">{errors.email.message}</p>}
-                            </Form.Group>
-                            <Form.Group className="mb-4">
-                                <Form.Label>Password</Form.Label>
-                                <div className="password-container">
-                                    <Form.Control
-                                        required
-                                        className={errors.password || !isPasswordValid ? "invalid-input" : ""}
-                                        type={showPassword ? "text" : "password"}
-                                        placeholder="Enter your password..."
-                                        {...register("password")}
-                                    />
-                                    <Button className={showPassword ? "passwordShown" : "passwordHidden"} onClick={toggleShow} />
-                                </div>
-                                {errors.password && <p className="text-danger error-msg">{errors.password.message}</p>}
-                            </Form.Group>
-                            <Button className="mb-2" type="submit">Log In</Button>
-                            <p className="mb-5 other-link">New member? <Link to={"/signup"}>Sign up</Link> here!</p>
-                        </Form>
-                        <div className="col-md-6 mt-4 easy-login-btn-group">
-                            <Button className="col-md-12 mb-4"><img src={IMAGES.fb} alt="" />Continue with Google</Button>
-                            <Button className="col-md-12 mb-4"><img src={IMAGES.fb} alt="" />Continue with Facebook</Button>
-                            <Button className="col-md-12 mb-4"><img src={IMAGES.fb} alt="" />Continue with Facebook</Button>
+                                <Button className={showPassword ? "passwordShown" : "passwordHidden"} onClick={toggleShow} />
+                            </div>
+                            {errors.password && <p className="text-danger error-msg">{errors.password.message}</p>}
+                        </Form.Group>
+                        <Button className="mb-2" type="submit">Log In</Button>
+                        <p className="mb-5 other-link">Need an account? <Link to={"/signup"}>Sign up</Link> here!</p>
+                    </Form>
+                    <div>
+                        <p className="line-text text-secondary fs-6"><span>Or With</span></p>
+                        <div className="d-flex justify-content-between mt-4 easy-login-btn-group">
+                            <Button className="me-2"><img src={IMAGES.google} alt="" />Google</Button>
+                            <Button className="ms-2"><img src={IMAGES.fb} alt="" />Facebook</Button>
                         </div>
                     </div>
                 </div>

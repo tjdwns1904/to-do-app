@@ -52,7 +52,8 @@ html body {
     border-bottom: 1px solid #d1d1d1;
     position: relative;
     z-index: 1;
-    &:first-child{
+
+    &:first-child {
         padding-bottom: 0;
         border: none;
     }
@@ -62,7 +63,7 @@ html body {
     margin: 0 auto;
 }
 
-.main-pic{
+.main-pic {
     margin-top: var(--margin);
     width: 1200px;
     border-radius: 10px;
@@ -379,8 +380,9 @@ html body {
 }
 
 .contact-container {
-    float: right;
     display: flex;
+    justify-content: center;
+    align-items: center;
     flex-direction: column;
 }
 
@@ -391,9 +393,10 @@ html body {
     }
 }
 
-.yt {
-    content: url("./assets/images/yt.png");
-    width: 50px;
+.linkedin {
+    content: url("./assets/images/linkedin.png");
+    width: 42px;
+    margin-bottom: 5px;
 }
 
 .ig {
@@ -406,9 +409,10 @@ html body {
     width: 50px;
 }
 
-.twit {
-    content: url("./assets/images/twit.png");
-    width: 50px;
+.github {
+    margin-top: 7px;
+    content: url("./assets/images/github.png");
+    width: 40px;
 }
 
 .login-container {
@@ -466,13 +470,27 @@ textarea {
     color: #4e4e4e;
 }
 
+.line-text {
+    width: 100%; 
+    text-align: center; 
+    border-bottom: 1px solid #6c757d;
+    line-height: 0.1em;
+    margin: 10px 0 30px; 
+}
+
+.line-text span{
+    background-color: #F9F2ED;
+    padding: 0 10px;
+}
+
 .easy-login-btn-group button {
     background-color: #fff;
     color: #000;
     font-weight: bold;
     border: 1px solid #b8b8b8;
-    padding: 5px 0;
+    padding: 2px 15px;
     display: block;
+    width: 50%;
     text-decoration: none;
     font-size: 18px;
     line-height: 35px;
@@ -636,6 +654,7 @@ small {
     display: flex;
     position: relative;
     align-items: center;
+
     &:hover {
         transform: translate(5px, -5px);
         transition: ease-in-out 0.2s;
@@ -895,6 +914,7 @@ textarea {
     padding: 5px 7px;
     border-bottom: 0.1px solid #d1d1d1;
     color: #727272;
+
     &:hover {
         background-color: #f1f1f1;
         cursor: pointer;
@@ -974,31 +994,33 @@ textarea {
     line-height: 25px;
     border-radius: 10px;
     margin-bottom: 0;
-    &:hover{
+
+    &:hover {
         background-color: #e3e3e3;
         transition: ease-in-out 0.1s;
     }
 }
 
-.invalid-input{
+.invalid-input {
     border-color: red !important;
 }
 
-.loading{
+.loading {
     position: absolute;
     z-index: 10;
 }
 
 @keyframes spin {
-    0%{
+    0% {
         transform: translate(-50%, -50%) rotate(0deg);
     }
-    100%{
+
+    100% {
         transform: translate(-50%, -50%) rotate(360deg);
     }
 }
 
-.spinner{
+.spinner {
     position: absolute;
     top: 50%;
     left: 50%;
@@ -1012,19 +1034,20 @@ textarea {
 }
 
 @keyframes rotation {
-    0%{
+    0% {
         transform: rotate(180deg);
     }
-    100%{
+
+    100% {
         transform: rotate(0);
     }
 }
 
-.list-container{
+.list-container {
     position: relative;
 }
 
-.list-shown{
+.list-shown {
     position: absolute;
     right: 0;
     top: 20px;
@@ -1033,9 +1056,9 @@ textarea {
     background: url("./assets/images/down-arrow.png") no-repeat center;
     transform: rotate(180deg);
     animation: rotation 0.2s linear alternate-reverse;
-}   
+}
 
-.list-hidden{
+.list-hidden {
     position: absolute;
     right: 0;
     top: 20px;
@@ -1044,11 +1067,11 @@ textarea {
     background: url("./assets/images/down-arrow.png") no-repeat center;
 }
 
-.add-text{
+.add-text {
     color: red !important;
 }
 
-.empty-list{
+.empty-list {
     background: url("./assets/images/freedom-1238930.jpg") no-repeat center transparent;
     background-size: cover;
     width: 400px;
@@ -1058,21 +1081,21 @@ textarea {
     border-radius: 50%;
 }
 
-.empty-text{
+.empty-text {
     text-align: center;
     color: #555555;
 }
 
-.empty-text p{
+.empty-text p {
     font-weight: 900;
     font-size: 30px;
 }
 
-.datetime-input-container{
+.datetime-input-container {
     margin-top: 20px;
 }
 
-.error-page{
+.error-page {
     width: 700px;
     height: 700px;
     background: url("./assets/images/404.png") no-repeat transparent center;
@@ -1084,7 +1107,7 @@ textarea {
     opacity: 0.8;
 }
 
-.error-page h2{
+.error-page h2 {
     font-weight: 900;
     font-family: "Nunito";
     text-align: center;
@@ -1093,29 +1116,29 @@ textarea {
     transform: translateY(50%);
 }
 
-.repeat{
+.repeat {
     background: url("./assets/images/refresh.png") no-repeat 0 3px transparent;
     padding-left: 20px;
 }
 
-.task-left{
+.task-left {
     font-weight: 900;
     font-size: 20px;
     color: #726d6d;
     margin-bottom: 30px;
 }
 
-.today{
+.today {
     width: 50%;
     padding: 15px 30px 15px 20px;
 }
 
-.calendar-container{
+.calendar-container {
     width: 50%;
     padding: 15px 30px 15px 0;
 }
 
-.calendar{
+.calendar {
     background-color: #fff;
     border-radius: 10px;
     box-shadow: 1px 1px 5px 1px #b0b0b0;
@@ -1124,18 +1147,18 @@ textarea {
     overflow-y: scroll;
 }
 
-.time-container{
+.time-container {
     display: flex;
     align-items: start;
 }
 
-.time-text{
+.time-text {
     color: #929292;
     margin-bottom: 0;
     margin-right: 10px;
 }
 
-.timeline{
+.timeline {
     width: 100%;
     height: 60px;
     border-top: 0.5px solid #f1f1f1;
@@ -1143,7 +1166,7 @@ textarea {
     display: flex;
 }
 
-.task-card{
+.task-card {
     position: relative;
     /* top: var(--space); */
     background-color: #3882f069;
@@ -1153,39 +1176,40 @@ textarea {
     border-left: 5px solid #3085C3;
 }
 
-.task-time{
+.task-time {
     font-size: 11px;
     margin-bottom: 5px;
     font-weight: bold;
     color: #363636;
 }
 
-.task-title-text{
+.task-title-text {
     font-size: 18px;
     margin-bottom: 0;
     font-weight: bold;
     color: #363636;
 }
 
-.search-bar-container{
+.search-bar-container {
     display: flex;
     align-items: start;
 }
 
-.search-bar{
+.search-bar {
     width: 300px;
     height: 40px;
     border: 0.5px solid #b1b1b1;
     border-top-left-radius: 25px;
     border-bottom-left-radius: 25px;
     padding: 8px 15px;
-    &:focus{
+
+    &:focus {
         border: 0.5px solid #4a8fc1;
         outline: none;
     }
 }
 
-.search-btn{
+.search-btn {
     width: 60px;
     height: 40px;
     background: url("./assets/images/search-interface-symbol.png") no-repeat 20px center #f1f1f1;
@@ -1193,7 +1217,8 @@ textarea {
     border-bottom-right-radius: 25px;
     border: 0.5px solid #b1b1b1;
     border-left: none;
-    &:hover{
+
+    &:hover {
         background-color: #e9e9e9;
         box-shadow: 1px 1px 5px 1px #f1f1f1;
         border-left: 0.5px solid #b1b1b1;

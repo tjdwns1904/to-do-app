@@ -5,6 +5,7 @@ const IMAGES = {
     screenshot3: new URL("./scr2.png", import.meta.url).href,
     screenshot4: new URL("./scr3.png", import.meta.url).href,
     fb: new URL("./fb.png", import.meta.url).href,
+    google: new URL("./google.svg", import.meta.url).href,
     profile: new URL("./user.png", import.meta.url).href,
 }
 
