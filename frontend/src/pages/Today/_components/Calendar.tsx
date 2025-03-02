@@ -16,7 +16,7 @@ function Calendar({ tasks }: { tasks: Task[] }) {
                             <div className="timeline">
                                 {tasks.filter(task => task.time.localeCompare(time) === 1 && task.time.localeCompare(times[times.indexOf(time) + 1]) === -1).map(task => {
                                     return (
-                                        <div key={task.id} className="task-card" style={{ '--space': (Number(task.time.slice(3, 5)) / 60) * 100 + "%" }}>
+                                        <div key={task.id} className="task-card" style={{ '--space': (Number(task.time.slice(3, 5)) / 60) * 100 + "%" } as React.CSSProperties}>
                                             <p className="task-time">{
                                                 task.time.slice(0, task.time.lastIndexOf(":")).localeCompare("12:00") === 1 ?
                                                     task.time.slice(0, task.time.lastIndexOf(":")) + " PM"

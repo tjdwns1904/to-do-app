@@ -59,7 +59,7 @@ function Home() {
                         <p className="text-secondary section-subtitle">Become focused, organized, and calm with TodoList. The world’s #1 task manager and to-do list app.</p>
                         <Link to={'/login'}><Button variant="danger" className="btn">Get Started</Button></Link>
                     </div>
-                    <img src={IMAGES.screenshot1} alt="" className="main-pic" style={{"--margin": margin + "px"}}/>
+                    <img src={IMAGES.screenshot1} alt="" className="main-pic" style={{"--margin": margin + "px"} as React.CSSProperties}/>
                 </div>
                 <div className="section-container">
                     <p>30 million+ people and teams trust their sanity and productivity to TodoList</p>

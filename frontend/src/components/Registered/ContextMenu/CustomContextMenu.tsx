@@ -5,7 +5,7 @@ interface Props {
 
 function CustomContextMenu({ point, handleShow }: Props) {
     return (
-        <div className="menu-container" style={{ '--pointX': point.x + "px", '--pointY': point.y + "px" }}>
+        <div className="menu-container" style={{ '--pointX': point.x + "px", '--pointY': point.y + "px" } as React.CSSProperties}>
             <p className="remove-btn text-danger" onClick={() => {
                 handleShow();
             }}>Delete</p>
