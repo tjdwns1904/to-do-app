@@ -1,14 +1,14 @@
 import { ErrorInformation } from "@/types/error";
-import { ProjectPayload } from "@/types/Payload";
-import { axiosInstance } from "@/utils/axios";
+import { ProjectPayload } from "@/types/payload";
+import { kyInstance } from "@/utils/ky";
 import { useMutation, UseMutationOptions } from "@tanstack/react-query";
-import { AxiosError } from "axios";
+import { HTTPError } from "ky";
 
 export const useAddProject = (
-    props: UseMutationOptions<unknown, AxiosError<ErrorInformation>, ProjectPayload>
+    props: UseMutationOptions<unknown, HTTPError<ErrorInformation>, ProjectPayload>
 ) => useMutation({
     ...props,
     mutationFn: async (options) => {
-        return await axiosInstance.post("/projects", options);
+        return await kyInstance.post("projects", { json: { ...options } });
     }
 })

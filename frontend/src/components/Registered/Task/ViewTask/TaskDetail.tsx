@@ -119,7 +119,6 @@ function TaskDetail({ selectedTask, onConfirm, onCloseModal }: Props) {
     };
 
     const handleConfirm = (task: UpdateTaskForm) => {
-        console.log(task);
         if (userTags.length > 0) {
             onConfirm({ ...task, tags: JSON.stringify(userTags), project: userProject });
         } else {

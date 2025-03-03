@@ -1,11 +1,11 @@
 const db = require('../config/database');
 
 const addProject = (req, res) => {
-    const { userid, name } = req.body;
-    db.query("SELECT * FROM projects WHERE userid = ? AND name = ?", [userid, name], (err, r) => {
+    const { userID, name } = req.body;
+    db.query("SELECT * FROM projects WHERE userid = ? AND name = ?", [userID, name], (err, r) => {
         if(err)return res.send({err: err});
         if(r.length === 0){
-            db.query("INSERT INTO projects (userid, name) VALUES (?, ?)", [userid, name], (err, result) => {
+            db.query("INSERT INTO projects (userid, name) VALUES (?, ?)", [userID, name], (err, result) => {
                 if (err) return res.send({ err: err });
                 return res.send({ msg: "Project added successfully" });
             });

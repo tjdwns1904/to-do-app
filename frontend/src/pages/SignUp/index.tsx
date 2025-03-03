@@ -39,7 +39,7 @@ function Signup() {
     const [showCPassword, setShowCPassword] = useState(false);
     const toggleShow = (e: MouseEvent<HTMLButtonElement>) => {
         const { id } = e.currentTarget;
-        if (id === "p") {
+        if (id === "password") {
             setShowPassword(prev => !prev);
         } else {
             setShowCPassword(prev => !prev);
@@ -54,12 +54,11 @@ function Signup() {
                 alert(data.msg);
             }
         },
-        onError: () => {
-            console.log("Error");
+        onError: (error) => {
+            console.log(error);
         }
     })
     const registerAccount = (user: SignupForm) => {
-        console.log(user);
         signup(user);
     }
     return (
@@ -116,7 +115,7 @@ function Signup() {
                                     type={showPassword ? "text" : "password"}
                                     {...register("password")}
                                 />
-                                <Button id="p" className={showPassword ? "passwordShown" : "passwordHidden"} onClick={(e) => toggleShow(e)} />
+                                <Button id="password" className={showPassword ? "passwordShown" : "passwordHidden"} onClick={(e) => toggleShow(e)} />
                             </div>
                             <Form.Text className="text-secondary">Password must contain 1 capital letter, 1 special character and, longer than 8 words</Form.Text>
                             {errors.password && <p className="text-danger error-msg">{errors.password.message}</p>}
@@ -131,7 +130,7 @@ function Signup() {
                                     type={showCPassword ? "text" : "password"}
                                     {...register("passwordConfirm")}
                                 />
-                                <Button id="c" className={showCPassword ? "passwordShown" : "passwordHidden"} onClick={(e) => toggleShow(e)} />
+                                <Button id="confirmPassword" className={showCPassword ? "passwordShown" : "passwordHidden"} onClick={(e) => toggleShow(e)} />
                             </div>
                             {errors.passwordConfirm && <p className="text-danger error-msg">{errors.passwordConfirm.message}</p>}
                         </Form.Group>

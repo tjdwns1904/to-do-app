@@ -53,7 +53,7 @@ export default function TaskList({ title, type }: Props) {
         },
         onError: (error) => {
             if (error.response?.status === 409) {
-                alert(error.response.data.message);
+                alert(error.response.text().then((text) => text));
             }
         },
         onSettled: () => {

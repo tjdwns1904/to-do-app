@@ -1,14 +1,14 @@
 import { Task } from "@/types/common";
 import { ErrorInformation } from "@/types/error";
-import { axiosInstance } from "@/utils/axios";
+import { kyInstance } from "@/utils/ky";
 import { useMutation, UseMutationOptions } from "@tanstack/react-query";
-import { AxiosError } from "axios";
+import { HTTPError } from "ky";
 
 
-export const useUpdateTask = (props: UseMutationOptions<unknown, AxiosError<ErrorInformation>, Task>) =>
+export const useUpdateTask = (props: UseMutationOptions<unknown, HTTPError<ErrorInformation>, Task>) =>
     useMutation({
         ...props,
         mutationFn: async ({ id, ...options }) => {
-            return await axiosInstance.patch(`/tasks/${id}`, { ...options });
+            return await kyInstance.patch(`tasks/${id}`, { json: { ...options } });
         }
     })

@@ -123,9 +123,11 @@ function AddTask({ onCloseModal, onConfirm }: Props) {
         handleSelectionClose();
     };
     const handleAddTask = (task: AddTaskForm) => {
-        setValue("tags", JSON.stringify(userTags));
-        setValue("project", userProject);
-        onConfirm(task);
+        if (userTags.length > 0) {
+            onConfirm({ ...task, tags: JSON.stringify(userTags), project: userProject });
+        } else {
+            onConfirm({ ...task, tags: "[]", project: userProject });
+        }
     }
     return (
         <>

@@ -1,14 +1,14 @@
 import { ErrorInformation } from "@/types/error";
 import { TagPayload } from "@/types/payload";
-import { axiosInstance } from "@/utils/axios";
+import { kyInstance } from "@/utils/ky";
 import { useMutation, UseMutationOptions } from "@tanstack/react-query";
-import { AxiosError } from "axios";
+import { HTTPError } from "ky";
 
 
-export const useDeleteTag = (props: UseMutationOptions<unknown, AxiosError<ErrorInformation>, TagPayload>) =>
+export const useDeleteTag = (props: UseMutationOptions<unknown, HTTPError<ErrorInformation>, TagPayload>) =>
     useMutation({
         ...props,
         mutationFn: async ({ name, userID }) => {
-            return await axiosInstance.delete(`/tags/${name}`, { data: { userID } });
+            return await kyInstance.delete(`tags/${name}`, { json: { userID } });
         }
     })

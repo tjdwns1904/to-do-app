@@ -1,14 +1,14 @@
 import { ErrorInformation } from "@/types/error";
 import { ProjectPayload } from "@/types/payload";
-import { axiosInstance } from "@/utils/axios";
+import { kyInstance } from "@/utils/ky";
 import { useMutation, UseMutationOptions } from "@tanstack/react-query";
-import { AxiosError } from "axios";
+import { HTTPError } from "ky";
 
 
-export const useDeleteProject = (props: UseMutationOptions<unknown, AxiosError<ErrorInformation>, ProjectPayload>) =>
+export const useDeleteProject = (props: UseMutationOptions<unknown, HTTPError<ErrorInformation>, ProjectPayload>) =>
     useMutation({
         ...props,
         mutationFn: async ({ userID, name }) => {
-            return await axiosInstance.delete(`/projects/${name}`, { data: { userID } });
+            return await kyInstance.delete(`projects/${name}`, { json: { userID } });
         }
     })

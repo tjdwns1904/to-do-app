@@ -1,15 +1,23 @@
 import { SignupForm } from "@/pages/SignUp";
-import { axiosInstance } from "@/utils/axios";
+import { kyInstance } from "@/utils/ky";
 import { useMutation, UseMutationOptions } from "@tanstack/react-query";
+import { HTTPError } from "ky";
 
 interface Response {
     msg: string;
 }
 
-export const useSignup = (props: UseMutationOptions<Response, unknown, SignupForm>) => useMutation({
+export const useSignup = (props: UseMutationOptions<Response, HTTPError, SignupForm>) => useMutation({
     ...props,
     mutationFn: async ({ name, username, email, password }: SignupForm) => {
-        const { data } = await axiosInstance.post("/auth/register", { name: name, username: username, email: email, password: password });
+        const data = await kyInstance.post("auth/register", {
+            json: {
+                name: name,
+                username: username,
+                email: email,
+                password: password
+            }
+        }).json<Response>();
         return data;
     },
 });
