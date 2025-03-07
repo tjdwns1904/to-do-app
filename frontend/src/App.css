@@ -71,23 +71,21 @@
   }
 }
 
-@base {
-  html body {
-    margin: 0;
-    width: 100vw;
-    overflow-x: hidden;
-  }
+html body {
+  margin: 0;
+  width: 100vw;
+  overflow-x: hidden;
+}
 
-  input,
-  textarea {
-    &:focus {
-      border: 1px solid #3085c3 !important;
-      box-shadow: none !important;
-    }
+input,
+textarea {
+  &:focus {
+    border: 1px solid #3085c3 !important;
+    box-shadow: none !important;
   }
+}
 
-  textarea {
-    height: 60px !important;
-    resize: none !important;
-  }
+textarea {
+  height: 60px !important;
+  resize: none !important;
 }
