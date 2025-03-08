@@ -12,6 +12,7 @@ import { z } from "zod";
 import { useForm } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
 import dayjs from "dayjs";
+import customToast from "@/utils/toast";
 
 interface Props {
   onCloseModal: () => void;
@@ -58,11 +59,16 @@ function AddTask({ onCloseModal, onConfirm }: Props) {
     staleTime: 1000 * 60 * 5,
   });
   const { mutate: addProject } = useAddProject({
-    onSuccess: () => {
-      refetchProjects();
+    onSuccess: (data) => {
+      if (data.code && data.code === 201) {
+        customToast.success(data.msg);
+        refetchProjects();
+      } else {
+        customToast.error(data.msg);
+      }
     },
     onError: (error) => {
-      console.log(error);
+      customToast.error("Error: " + error.message);
     },
     onSettled: () => {
       closeAddFormModal();
@@ -70,11 +76,16 @@ function AddTask({ onCloseModal, onConfirm }: Props) {
   });
 
   const { mutate: addTag } = useAddTag({
-    onSuccess: () => {
-      refetchTags();
+    onSuccess: (data) => {
+      if (data.code && data.code === 201) {
+        customToast.success(data.msg);
+        refetchTags();
+      } else {
+        customToast.error(data.msg);
+      }
     },
     onError: (error) => {
-      console.log(error);
+      customToast.error("Error: " + error.message);
     },
     onSettled: () => {
       closeAddFormModal();

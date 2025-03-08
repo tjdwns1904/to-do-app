@@ -11,6 +11,7 @@ import { INITIAL_USER_VALUE } from "@/utils/storage_const";
 import { z } from "zod";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { useForm } from "react-hook-form";
+import customToast from "@/utils/toast";
 
 const EMAIL_FORMAT = /^\w+([\.-]?\w+)*@\w+([\.-]?\w+)*(\.\w{2,3})+$/;
 
@@ -49,10 +50,11 @@ function Login() {
       } else {
         setIsEmailValid(false);
         setIsPasswordValid(false);
+        customToast.error(data.msg);
       }
     },
-    onError: () => {
-      console.log("Error");
+    onError: (error) => {
+      customToast.error("Error: " + error.message);
     },
   });
   const handleLogin = (user: LoginForm) => {

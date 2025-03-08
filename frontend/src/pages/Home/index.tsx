@@ -1,15 +1,22 @@
-import React, { MouseEvent, useEffect, useState } from "react";
+import React, { MouseEvent, useEffect, useRef, useState } from "react";
 import Header from "@/components/Common/Header";
 import { Button } from "react-bootstrap";
 import { Link } from "react-router-dom";
 import Footer from "@/components/Common/Footer";
 import IMAGES from "@/assets/images/images";
 import { FUNCTIONALITIES } from "@/utils/storage_const";
+import { useGSAP } from "@gsap/react";
+import gsap from "gsap";
+import { ScrollTrigger } from "gsap/ScrollTrigger";
+
+gsap.registerPlugin(useGSAP, ScrollTrigger);
 
 function Home() {
   const [scrollY, setScrollY] = useState(0);
   const [image, setImage] = useState("");
   const [active, setActive] = useState("first");
+  const main = useRef<HTMLDivElement | null>(null);
+  const container = useRef<HTMLDivElement | null>(null);
   const handleScroll = () => {
     setScrollY(window.scrollY);
   };
@@ -45,6 +52,19 @@ function Home() {
     };
   }, [window.scrollY]);
 
+  useGSAP(
+    () => {
+      ScrollTrigger.create({
+        trigger: container.current,
+        pin: true,
+        start: "top top",
+        end: "+=400",
+        markers: true,
+      });
+    },
+    { scope: main },
+  );
+
   const handleBulletPosition = () => {
     if (active === "second") {
       return "33%";
@@ -63,7 +83,7 @@ function Home() {
   return (
     <>
       <Header />
-      <div className="h-fit bg-[#F9F2ED]">
+      <div className="h-fit bg-[#F9F2ED]" ref={main}>
         <div className="relative z-1 w-screen bg-[#F9F2ED] pt-[50px] text-center">
           <div className="col-sm-6 mx-auto">
             <h1 className="!text-[64px] !font-bold">
@@ -153,7 +173,7 @@ function Home() {
           <p className="text-muted mx-auto w-fit rounded-[10px] bg-[#e3e3e3] px-[10px] py-[5px]">
             Simple
           </p>
-          <div className="row items-center justify-center">
+          <div className="row items-center justify-center" ref={container}>
             <img
               src={
                 active === "fourth" || active === "third"

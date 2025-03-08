@@ -12,6 +12,7 @@ import { useDeleteProject } from "@/hooks/useDeleteProject";
 import { useDeleteTag } from "@/hooks/useDeleteTag";
 import { useLogout } from "../../services/useLogout";
 import { useQueryClient } from "@tanstack/react-query";
+import customToast from "@/utils/toast";
 
 interface Props {
   isMenuShown: boolean;
@@ -44,13 +45,14 @@ function Header({ isMenuShown, setIsMenuShown }: Props) {
     staleTime: 1000 * 60 * 5,
   });
   const { mutate: logout } = useLogout({
-    onSuccess: () => {
+    onSuccess: (data) => {
+      customToast.success(data.msg);
       queryClient.clear();
       setUser(INITIAL_USER_VALUE);
       navigate("/", { replace: true });
     },
     onError: (error) => {
-      console.log(error);
+      customToast.error("Error: " + error.message);
     },
   });
   const {
@@ -59,22 +61,32 @@ function Header({ isMenuShown, setIsMenuShown }: Props) {
     Modal: DeleteConfirmModal,
   } = useModal({ children: DeleteConfirm });
   const { mutate: deleteProject } = useDeleteProject({
-    onSuccess: () => {
-      refetchProjects();
+    onSuccess: (data) => {
+      if (data.code && data.code === 200) {
+        customToast.success(data.msg);
+        refetchProjects();
+      } else {
+        customToast.error(data.msg);
+      }
     },
     onError: (error) => {
-      console.log(error);
+      customToast.error("Error: " + error.message);
     },
     onSettled: () => {
       closeDeleteConfirmModal();
     },
   });
   const { mutate: deleteTag } = useDeleteTag({
-    onSuccess: () => {
-      refetchTags();
+    onSuccess: (data) => {
+      if (data.code && data.code === 200) {
+        customToast.success(data.msg);
+        refetchTags();
+      } else {
+        customToast.error(data.msg);
+      }
     },
     onError: (error) => {
-      console.log(error);
+      customToast.error("Error: " + error.message);
     },
     onSettled: () => {
       closeDeleteConfirmModal();

@@ -7,11 +7,10 @@ import NotFound from "./pages/NotFound";
 import { useSessionStorage } from "@uidotdev/usehooks";
 import { INITIAL_USER_VALUE } from "./utils/storage_const";
 import { QueryClient, QueryClientProvider } from "@tanstack/react-query";
-import { Suspense } from "react";
-import LoadingPage from "./pages/LoadingPage";
 import Today from "./pages/Today";
 import Upcoming from "./pages/Upcoming";
 import FilteredTask from "./pages/FilteredTask";
+import { ToastContainer } from "react-toastify";
 
 const queryClient = new QueryClient();
 const InnerApp = () => {
@@ -39,9 +38,8 @@ const InnerApp = () => {
 function App() {
   return (
     <QueryClientProvider client={queryClient}>
-      <Suspense fallback={<LoadingPage />}>
-        <InnerApp />
-      </Suspense>
+      <ToastContainer />
+      <InnerApp />
     </QueryClientProvider>
   );
 }

@@ -19,6 +19,7 @@ import Calendar from "@/pages/Today/_components/Calendar";
 import { TaskFilterPayload } from "@/types/payload";
 import { keepPreviousData } from "@tanstack/react-query";
 import dayjs from "dayjs";
+import customToast from "@/utils/toast";
 
 interface Props {
   title: string;
@@ -57,7 +58,6 @@ export default function TaskList({ title, type }: Props) {
     Omit<TaskFilterPayload, "userID"> | undefined
   >(searchFilters);
   const [isMenuShown, setIsMenuShown] = useState(false);
-  const [isLoading, setIsLoading] = useState(false);
   const [task, setTask] = useState<Task>({
     id: "",
     userID: "",
@@ -82,13 +82,16 @@ export default function TaskList({ title, type }: Props) {
     },
   );
   const { mutate: addTask } = useAddTask({
-    onSuccess: () => {
-      refetchTasks();
+    onSuccess: (data) => {
+      if (data.code && data.code === 201) {
+        customToast.success(data.msg);
+        refetchTasks();
+      } else {
+        customToast.error(data.msg);
+      }
     },
     onError: (error) => {
-      if (error.response?.status === 409) {
-        alert(error.response.text().then((text) => text));
-      }
+      customToast.error("Error: " + error.message);
     },
     onSettled: () => {
       closeAddTaskModal();
@@ -105,11 +108,16 @@ export default function TaskList({ title, type }: Props) {
   };
 
   const { mutate: updateTask } = useUpdateTask({
-    onSuccess: () => {
-      refetchTasks();
+    onSuccess: (data) => {
+      if (data.code && data.code === 200) {
+        customToast.success(data.msg);
+        refetchTasks();
+      } else {
+        customToast.error(data.msg);
+      }
     },
     onError: (error) => {
-      console.log(error);
+      customToast.error("Error: " + error.message);
     },
     onSettled: () => {
       closeTaskDetailModal();
@@ -121,7 +129,7 @@ export default function TaskList({ title, type }: Props) {
       refetchTasks();
     },
     onError: (error) => {
-      console.log(error);
+      customToast.error("Error: " + error.message);
     },
     onSettled: () => {
       closeTaskDetailModal();
@@ -142,13 +150,13 @@ export default function TaskList({ title, type }: Props) {
     updateTask(task);
   };
 
-  const { mutate: deleteTask } = useDeleteTask({
-    onSuccess: () => {
+  const { mutate: deleteTask, isPending } = useDeleteTask({
+    onSuccess: (data) => {
+      customToast.success(data.msg);
       refetchTasks();
-      setIsLoading(false);
     },
     onError: (error) => {
-      console.log(error);
+      customToast.error("Error: " + error.message);
     },
     onSettled: () => {
       closeDeleteConfirmModal();
@@ -168,7 +176,6 @@ export default function TaskList({ title, type }: Props) {
 
   const handleDeleteTask = () => {
     if (!task) return;
-    setIsLoading(true);
     deleteTask(task.id);
   };
   const handleTaskClick = (task: Task) => {
@@ -181,7 +188,7 @@ export default function TaskList({ title, type }: Props) {
   };
   return (
     <>
-      {(isLoading || taskIsLoading) && <LoadingPage />}
+      {(isPending || taskIsLoading) && <LoadingPage />}
       <DeleteConfirmModal type="task" onConfirm={handleDeleteTask} />
       <div className="flex font-[Nunito]" onClick={() => setIsMenuShown(false)}>
         <TaskDetailModal selectedTask={task} onConfirm={handleUpdateTask} />
@@ -217,7 +224,6 @@ export default function TaskList({ title, type }: Props) {
           {tasks && tasks.length > 0 ? (
             <div className="h-[80vh] overflow-x-hidden overflow-y-scroll p-[8px]">
               {tasks.map((task) => {
-                console.log(task);
                 return (
                   <TaskCard
                     key={task.id}

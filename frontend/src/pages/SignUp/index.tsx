@@ -8,6 +8,8 @@ import { z } from "zod";
 import { useForm } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
 import IMAGES from "@/assets/images/images";
+import customToast from "@/utils/toast";
+import LoadingPage from "../LoadingPage";
 
 const EMAIL_FORMAT = /^\w+([\.-]?\w+)*@\w+([\.-]?\w+)*(\.\w{2,3})+$/;
 const PASSWORD_FORMAT =
@@ -52,17 +54,17 @@ function Signup() {
       setShowCPassword((prev) => !prev);
     }
   };
-  const { mutate: signup } = useSignup({
+  const { mutate: signup, isPending } = useSignup({
     onSuccess: (data) => {
-      if (data.msg === "Registered successfully!") {
-        alert(data.msg);
+      if (data.code && data.code === 201) {
+        customToast.success(data.msg);
         navigate("/login", { replace: true });
       } else {
-        alert(data.msg);
+        customToast.error(data.msg);
       }
     },
     onError: (error) => {
-      console.log(error);
+      customToast.error("Error: " + error.message);
     },
   });
   const registerAccount = (user: SignupForm) => {
@@ -70,6 +72,7 @@ function Signup() {
   };
   return (
     <>
+      {isPending && <LoadingPage />}
       <Header />
       <div className="h-fit bg-[#F9F2ED] py-[100px]">
         <div className="col-lg-4 col-md-5 mx-auto px-[40px] py-[10px] text-center">
