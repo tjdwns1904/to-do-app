@@ -257,8 +257,8 @@ function AddTask({ onCloseModal, onConfirm }: Props) {
                     onClick={handleSelectionClose}
                   />
                   <div className="mt-[20px] px-[7px] py-[5px]">
-                    <input type="date" className="me-2" {...register("date")} />
-                    <input type="time" {...register("time")} />
+                    <input type="date" className="me-2 border border-[#3085c3] rounded-[5px] px-[7px] py-[5px] cursor-text" {...register("date")} />
+                    <input type="time" className="border border-[#3085c3] rounded-[5px] px-[7px] py-[5px] cursor-text" {...register("time")} />
                   </div>
                   <div className="mt-[10px] px-[7px] py-[5px] text-end">
                     <button
@@ -274,7 +274,7 @@ function AddTask({ onCloseModal, onConfirm }: Props) {
               )}
               {selected === "tag" && (
                 <div className="absolute right-0 w-fit rounded-[10px] border border-[#b8b8b8] bg-white">
-                  <p className="mb-1 border-b-[.1px] border-b-[#494949] px-[7px] py-[5px] !font-bold !text-[#494949]">
+                  <p className="mb-0 border-b-[.1px] border-b-[#494949] px-[7px] py-[5px] !font-bold !text-[#494949]">
                     Tags
                   </p>
                   <button
@@ -305,7 +305,7 @@ function AddTask({ onCloseModal, onConfirm }: Props) {
               )}
               {selected === "project" && (
                 <div className="absolute right-0 w-fit rounded-[10px] border border-[#b8b8b8] bg-white">
-                  <p className="mb-1 border-b-[.1px] border-b-[#494949] px-[7px] py-[5px] !font-bold !text-[#494949]">
+                  <p className="mb-0 border-b-[.1px] border-b-[#494949] px-[7px] py-[5px] !font-bold !text-[#494949]">
                     Projects
                   </p>
                   <button

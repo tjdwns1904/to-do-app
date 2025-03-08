@@ -256,8 +256,8 @@ function TaskDetail({ selectedTask, onConfirm, onCloseModal }: Props) {
                     onClick={handleSelectionClose}
                   />
                   <div className="mt-[20px] px-[7px] py-[5px]">
-                    <input type="date" className="me-2" {...register("date")} />
-                    <input type="time" {...register("time")} />
+                    <input type="date" className="me-2 border border-[#3085c3] rounded-[5px] px-[7px] py-[5px] cursor-text" {...register("date")} />
+                    <input type="time" className="border border-[#3085c3] rounded-[5px] px-[7px] py-[5px] cursor-text" {...register("time")} />
                   </div>
                   <div className="mt-[10px] px-[7px] py-[5px] text-end">
                     <button
@@ -272,12 +272,12 @@ function TaskDetail({ selectedTask, onConfirm, onCloseModal }: Props) {
                 </div>
               )}
               {selected === "tag" && (
-                <div className="absolute right-0 w-fit rounded-[10px] border border-[#b8b8b8] bg-white">
-                  <p className="mb-1 border-b-[.1px] border-b-[#494949] px-[7px] py-[5px] !font-bold !text-[#494949]">
+                <div className="absolute right-[35px] w-fit rounded-[10px] border border-[#b8b8b8] bg-white">
+                  <p className="mb-0 border-b-[.1px] border-b-[#494949] px-[8px] py-[6px] !font-bold !text-[#494949]">
                     Tags
                   </p>
                   <button
-                    className="absolute top-[5px] right-[5px] h-[20px] w-[20px] border-none bg-[url('@/assets/images/close.png')] bg-center bg-no-repeat duration-[.06s] ease-in-out hover:scale-[1.2]"
+                    className="absolute top-[8px] right-[4px] h-[20px] w-[20px] border-none bg-[url('@/assets/images/close.png')] bg-center bg-no-repeat duration-[.06s] ease-in-out hover:scale-[1.2]"
                     onClick={handleSelectionClose}
                   />
                   {tags &&
@@ -287,7 +287,7 @@ function TaskDetail({ selectedTask, onConfirm, onCloseModal }: Props) {
                         <p
                           key={tag.id}
                           id={tag.name}
-                          className="mb-0 cursor-pointer border-b border-b-[#d1d1d1] px-[7px] py-[5px] !text-[#727272] hover:bg-[#f1f1f1]"
+                          className="mb-0 cursor-pointer border-b border-b-[#d1d1d1] px-[8px] py-[5px] !text-[#727272] hover:bg-[#f1f1f1]"
                           onClick={(e) => addTaskTag(e)}
                         >
                           {tag.name}
@@ -295,7 +295,7 @@ function TaskDetail({ selectedTask, onConfirm, onCloseModal }: Props) {
                       );
                     })}
                   <p
-                    className="text-success mb-0 cursor-pointer rounded-br-[10px] rounded-bl-[10px] px-[7px] py-[5px] hover:bg-[#f1f1f1]"
+                    className="text-success mb-0 cursor-pointer rounded-br-[10px] rounded-bl-[10px] px-[8px] py-[5px] hover:bg-[#f1f1f1]"
                     onClick={openAddFormModal}
                   >
                     + Add new tag
@@ -304,11 +304,11 @@ function TaskDetail({ selectedTask, onConfirm, onCloseModal }: Props) {
               )}
               {selected === "project" && (
                 <div className="absolute right-0 w-fit rounded-[10px] border border-[#b8b8b8] bg-white">
-                  <p className="mb-1 border-b-[.1px] border-b-[#494949] px-[7px] py-[5px] !font-bold !text-[#494949]">
+                  <p className="mb-0 border-b-[.1px] border-b-[#494949] px-[8px] py-[6px] !font-bold !text-[#494949]">
                     Project
                   </p>
                   <button
-                    className="absolute top-[5px] right-[5px] h-[20px] w-[20px] border-none bg-[url('@/assets/images/close.png')] bg-center bg-no-repeat duration-[.06s] ease-in-out hover:scale-[1.2]"
+                    className="absolute top-[8px] right-[4px] h-[20px] w-[20px] border-none bg-[url('@/assets/images/close.png')] bg-center bg-no-repeat duration-[.06s] ease-in-out hover:scale-[1.2]"
                     onClick={handleSelectionClose}
                   />
                   {projects &&
@@ -318,7 +318,7 @@ function TaskDetail({ selectedTask, onConfirm, onCloseModal }: Props) {
                         <p
                           key={project.id}
                           id={project.name}
-                          className="mb-0 cursor-pointer border-b border-b-[#d1d1d1] px-[7px] py-[5px] !text-[#727272] hover:bg-[#f1f1f1]"
+                          className="mb-0 cursor-pointer border-b border-b-[#d1d1d1] px-[8px] py-[5px] !text-[#727272] hover:bg-[#f1f1f1]"
                           onClick={(e) => setProject(e)}
                         >
                           {project.name}
@@ -326,7 +326,7 @@ function TaskDetail({ selectedTask, onConfirm, onCloseModal }: Props) {
                       );
                     })}
                   <p
-                    className="text-success mb-0 cursor-pointer rounded-br-[10px] rounded-bl-[10px] px-[7px] py-[5px] hover:bg-[#f1f1f1]"
+                    className="text-success mb-0 cursor-pointer rounded-br-[10px] rounded-bl-[10px] px-[8px] py-[5px] hover:bg-[#f1f1f1]"
                     onClick={openAddFormModal}
                   >
                     + Add new project
@@ -340,13 +340,13 @@ function TaskDetail({ selectedTask, onConfirm, onCloseModal }: Props) {
               <p className="text-danger">{errors.title.message}</p>
             )}
             <button
-              className="me-1 !rounded-[5px] !border !border-transparent !bg-[#3882f0] px-[10px] py-[5px] text-white duration-[.2s] ease-in-out hover:!bg-[#3085C3]"
+              className="me-1 !rounded-[5px] !border !border-transparent !bg-[#3882f0] px-[15px] py-[5px] text-white duration-[.2s] ease-in-out hover:!bg-[#3085C3]"
               type="submit"
             >
               Edit
             </button>
             <button
-              className="!rounded-[5px] border border-[#bbbbbb] bg-white px-[10px] py-[5px] duration-[.2s] ease-in-out hover:!border-black"
+              className="!rounded-[5px] !border !border-[#bbbbbb] bg-white px-[10px] py-[5px] duration-[.2s] ease-in-out hover:!border-black"
               onClick={(e) => {
                 e.preventDefault();
                 onCloseModal();
