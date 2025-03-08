@@ -4,8 +4,8 @@ const cors = require('cors');
 app.use(express.json());
 app.use(cors({
     origin: ["http://localhost:5173"],
-    methods: ['GET', 'POST'],
-    credentials: true
+    methods: ['GET', 'POST', 'PATCH', 'DELETE'],
+    credentials: true,
 }));
 
 const session = require('express-session');
@@ -25,9 +25,9 @@ app.use(session({
 }));
 
 app.use("/auth", require("./routes/auth"));
-app.use("/task", require("./routes/task"));
-app.use("/tag", require("./routes/tag"));
-app.use("/project", require("./routes/project"));
+app.use("/tasks", require("./routes/task"));
+app.use("/tags", require("./routes/tag"));
+app.use("/projects", require("./routes/project"));
 app.use("/", require("./routes/fetch"));
 
 app.listen(3000, () => {

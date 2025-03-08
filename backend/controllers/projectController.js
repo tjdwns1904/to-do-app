@@ -1,31 +1,32 @@
 const db = require('../config/database');
 
 const addProject = (req, res) => {
-    const { id, project } = req.body;
-    db.query("SELECT * FROM projects WHERE userid = ? AND name = ?", [id, project], (err, r) => {
+    const { userID, name } = req.body;
+    db.query("SELECT * FROM projects WHERE userid = ? AND name = ?", [userID, name], (err, r) => {
         if(err)return res.send({err: err});
         if(r.length === 0){
-            db.query("INSERT INTO projects (userid, name) VALUES (?, ?)", [id, project], (err, result) => {
+            db.query("INSERT INTO projects (userid, name) VALUES (?, ?)", [userID, name], (err, result) => {
                 if (err) return res.send({ err: err });
-                return res.send({ msg: "Project added successfully" });
+                return res.send({ code: 201, msg: "Project added successfully" });
             });
         }else{
-            return res.send({msg: "The project already exists!"});
+            return res.send({ code: 409, msg: "The project already exists!"});
         }
     });
 };
 
 const deleteProject = (req, res) => {
-    const { userId, project } = req.body;
-    db.query("SELECT * FROM tasks WHERE userid = ? AND project = ?", [userId, project], (err, result) => {
+    const { name } = req.params;
+    const { userID } = req.body;
+    db.query("SELECT * FROM tasks WHERE userid = ? AND project = ?", [userID, name], (err, result) => {
         if (err) return res.send({ err: err });
         if (result.length === 0) {
-            db.query("DELETE FROM projects WHERE userid = ? AND name = ?", [userId, project], (err, r) => {
+            db.query("DELETE FROM projects WHERE userid = ? AND name = ?", [userID, name], (err, r) => {
                 if (err) return res.send({ err: err });
-                return res.send({ msg: "Project deleted successfully!" });
+                return res.send({ code: 200, msg: "Project deleted successfully!" });
             })
         } else {
-            return res.send({ msg: "There should be no related tasks with the project!" });
+            return res.send({ code: 409, msg: "There should be no related tasks with the project!" });
         }
     });
 };

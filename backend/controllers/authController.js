@@ -3,28 +3,28 @@ const bcrypt = require('bcrypt');
 const saltRounds = 10;
 
 const checkAuth = (req, res) => {
-    if(req.session.user){
-        return res.send({isLoggedIn: true, user: req.session.user});
-    }else{
-        return res.send({isLoggedIn: false});
+    if (req.session.user) {
+        return res.send({ isLoggedIn: true, user: req.session.user });
+    } else {
+        return res.send({ isLoggedIn: false });
     }
 }
 
 const login = (req, res) => {
     const { email, password } = req.body;
     db.query("SELECT * FROM users WHERE BINARY(email) = ?", [email], (err, result) => {
-        if(err)return res.send({err: err});
-        if(result.length > 0){
+        if (err) return res.send({ err: err });
+        if (result.length > 0) {
             bcrypt.compare(password, result[0].password, (err, same) => {
-                if(same){
+                if (same) {
                     req.session.user = result;
-                    return res.send({msg: "Welcome"})
-                }else{
-                    return res.send({msg: "Wrong password!"});
+                    return res.send({ code: 200, msg: "Welcome" });
+                } else {
+                    return res.send({ code: 401, msg: "Account not registered!" });
                 }
             })
-        }else{
-            return res.send({msg: "Email not registered! Please try again..."})
+        } else {
+            return res.send({ code: 401, msg: "Account not registered!" });
         }
     });
 };
@@ -56,29 +56,29 @@ const register = (req, res) => {
                                         if (err) {
                                             return res.send({ err: err });
                                         } else {
-                                            return res.send({ msg: "Registered successfully!" });
+                                            return res.send({ code: 201, msg: "Registered successfully!" });
                                         }
                                     }
                                 );
                             });
                         } else {
-                            return res.send({msg: "Email already exists!"});
+                            return res.send({ code: 409, msg: "Account with the same email already exists!" });
                         }
                     })
                 } else {
-                    return res.send({msg: "Username already exists!"});
+                    return res.send({ code: 409, msg: "Account with the same username already exists!" });
                 }
             })
         } else {
-            return res.send({msg: "Name already exists!"});
+            return res.send({ code: 409, msg: "Account with the same name already exists!" });
         }
     })
 }
 
 const logout = (req, res) => {
-    res.clearCookie('username');
     req.session.destroy();
-    return res.send({msg: "Logged out succesfully!"});
+    res.clearCookie("username");
+    res.status(200).send({ msg: "Logged out succesfully!" });
 }
 
 module.exports = { login, register, checkAuth, logout };
