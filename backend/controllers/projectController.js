@@ -7,10 +7,10 @@ const addProject = (req, res) => {
         if(r.length === 0){
             db.query("INSERT INTO projects (userid, name) VALUES (?, ?)", [userID, name], (err, result) => {
                 if (err) return res.send({ err: err });
-                return res.send({ msg: "Project added successfully" });
+                return res.send({ code: 201, msg: "Project added successfully" });
             });
         }else{
-            return res.send({msg: "The project already exists!"});
+            return res.send({ code: 409, msg: "The project already exists!"});
         }
     });
 };
@@ -23,10 +23,10 @@ const deleteProject = (req, res) => {
         if (result.length === 0) {
             db.query("DELETE FROM projects WHERE userid = ? AND name = ?", [userID, name], (err, r) => {
                 if (err) return res.send({ err: err });
-                return res.send({ msg: "Project deleted successfully!" });
+                return res.send({ code: 200, msg: "Project deleted successfully!" });
             })
         } else {
-            return res.send({ msg: "There should be no related tasks with the project!" });
+            return res.send({ code: 409, msg: "There should be no related tasks with the project!" });
         }
     });
 };

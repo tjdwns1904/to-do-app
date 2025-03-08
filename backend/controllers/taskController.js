@@ -34,10 +34,10 @@ const updateTask = (req, res) => {
             db.query(`UPDATE tasks SET title = ?, description = ?, project = ?, tags = ?, time = ?, date = ? WHERE userid = ? AND id = ?`,
                 [title, description, project, tags, time, date, userID, id], (err, r) => {
                     if (err) return res.send({ err: err });
-                    return res.send({ msg: "Task updated successfully!" })
+                    return res.send({ code: 200, msg: "Task updated successfully!" })
                 })
         } else {
-            return res.send({ msg: "The task already exists!" });
+            return res.send({ code: 409, msg: "The task already exists!" });
         }
     });
 };

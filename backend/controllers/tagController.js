@@ -7,10 +7,10 @@ const addTag = (req, res) => {
         if (r.length === 0) {
             db.query("INSERT INTO tags (userid, name) VALUES (?, ?)", [userID, name], (err, result) => {
                 if (err) return res.send({ err: err });
-                return res.send({ msg: "Tag added successfully" });
+                return res.send({ code: 201, msg: "Tag added successfully" });
             });
         } else {
-            return res.send({ msg: "The tag already exists!" });
+            return res.send({ code: 409, msg: "The tag already exists!" });
         }
     });
 };
@@ -23,10 +23,10 @@ const deleteTag = (req, res) => {
         if (result.length === 0) {
             db.query("DELETE FROM tags WHERE userid = ? AND name = ?", [userID, name], (err, r) => {
                 if (err) return res.send({ err: err });
-                return res.send({ msg: "Tag deleted successfully!" });
+                return res.send({ code: 200, msg: "Tag deleted successfully!" });
             })
         } else {
-            return res.send({ msg: "There should be no related tasks with the tag!" });
+            return res.send({ code: 409, msg: "There should be no related tasks with the tag!" });
         }
     });
 };

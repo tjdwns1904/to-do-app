@@ -1,11 +1,8 @@
 import { SignupForm } from "@/pages/SignUp";
+import { Response } from "@/types/common";
 import { kyInstance } from "@/utils/ky";
 import { useMutation, UseMutationOptions } from "@tanstack/react-query";
 import { HTTPError } from "ky";
-
-interface Response {
-    msg: string;
-}
 
 export const useSignup = (props: UseMutationOptions<Response, HTTPError, SignupForm>) => useMutation({
     ...props,

@@ -35,3 +35,7 @@ export interface Project {
     name: string;
 }
 
+export interface Response {
+    code?: number
+    msg: string;
+}
