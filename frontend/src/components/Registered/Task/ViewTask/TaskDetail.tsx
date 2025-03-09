@@ -256,8 +256,16 @@ function TaskDetail({ selectedTask, onConfirm, onCloseModal }: Props) {
                     onClick={handleSelectionClose}
                   />
                   <div className="mt-[20px] px-[7px] py-[5px]">
-                    <input type="date" className="me-2 border border-[#3085c3] rounded-[5px] px-[7px] py-[5px] cursor-text" {...register("date")} />
-                    <input type="time" className="border border-[#3085c3] rounded-[5px] px-[7px] py-[5px] cursor-text" {...register("time")} />
+                    <input
+                      type="date"
+                      className="me-2 cursor-text rounded-[5px] border border-[#3085c3] px-[7px] py-[5px]"
+                      {...register("date")}
+                    />
+                    <input
+                      type="time"
+                      className="cursor-text rounded-[5px] border border-[#3085c3] px-[7px] py-[5px]"
+                      {...register("time")}
+                    />
                   </div>
                   <div className="mt-[10px] px-[7px] py-[5px] text-end">
                     <button

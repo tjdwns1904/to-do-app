@@ -17,7 +17,7 @@ function DeleteConfirm({ type, onCloseModal, onConfirm }: Props) {
             Delete
           </Button>
           <Button
-            className="!rounded-[5px] !border !border-[#bbbbbb] bg-white px-[10px] py-[5px] duration-[.2s] text-black ease-in-out hover:!border-black ms-2"
+            className="ms-2 !rounded-[5px] !border !border-[#bbbbbb] bg-white px-[10px] py-[5px] text-black duration-[.2s] ease-in-out hover:!border-black"
             onClick={onCloseModal}
           >
             Cancel

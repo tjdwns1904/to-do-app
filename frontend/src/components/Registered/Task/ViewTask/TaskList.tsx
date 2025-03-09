@@ -197,12 +197,12 @@ export default function TaskList({ title, type }: Props) {
         <AddTaskModal onConfirm={handleAddTask} />
         <Header isMenuShown={isMenuShown} setIsMenuShown={setIsMenuShown} />
         <div className="w-full lg:flex">
-          <div className="lg:w-2/3 lg:px-[60px] px-[30px] py-[15px]">
+          <div className="px-[30px] py-[15px] lg:w-2/3 lg:px-[60px]">
             <div className="flex justify-between">
               <h2 className="!mb-[40px] !ml-[8px] !font-black">{title}</h2>
               <div className="flex items-start">
                 <input
-                  className="h-[40px] lg:w-[300px] w-[200px] rounded-tl-[25px] rounded-bl-[25px] border-[.5px] border-[#b1b1b1] px-[15px] py-[8px] focus:border-[#4a8fc1] focus:outline-none"
+                  className="h-[40px] w-[200px] rounded-tl-[25px] rounded-bl-[25px] border-[.5px] border-[#b1b1b1] px-[15px] py-[8px] focus:border-[#4a8fc1] focus:outline-none lg:w-[300px]"
                   type="text"
                   name="title"
                   id="search-text"
