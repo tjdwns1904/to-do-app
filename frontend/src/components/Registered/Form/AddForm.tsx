@@ -52,7 +52,7 @@ function AddForm({ type, onCloseModal, onConfirm }: Props) {
               Add {type}
             </button>
             <button
-              className="!rounded-[5px] border border-[#bbbbbb] bg-white px-[10px] py-[5px] duration-[.2s] ease-in-out hover:!border-black"
+              className="!rounded-[5px] !border !border-[#bbbbbb] bg-white px-[10px] py-[5px] duration-[.2s] ease-in-out hover:!border-black"
               onClick={onCloseModal}
             >
               Cancel

@@ -3,7 +3,7 @@ import LoadingPage from "@/pages/LoadingPage";
 import { Task } from "@/types/common";
 import { INITIAL_USER_VALUE } from "@/utils/storage_const";
 import { useSessionStorage } from "@uidotdev/usehooks";
-import { useMemo, useState } from "react";
+import { useEffect, useState } from "react";
 import AddTask, { AddTaskForm } from "../AddTask/AddTask";
 import useModal from "@/hooks/useModal";
 import { useUpdateTask } from "@/hooks/useUpdateTask";
@@ -28,7 +28,22 @@ interface Props {
 
 export default function TaskList({ title, type }: Props) {
   const [search, setSearch] = useState<string>("");
-  const searchFilters = useMemo(() => {
+  const [filters, setFilters] = useState<
+    Omit<TaskFilterPayload, "userID"> | undefined
+  >();
+  const [isMenuShown, setIsMenuShown] = useState(false);
+  const [task, setTask] = useState<Task>({
+    id: "",
+    userID: "",
+    title: "",
+    description: "",
+    time: "",
+    project: "",
+    tags: "",
+    isDone: false,
+    date: "",
+  });
+  const setSearchFilters = () => {
     let searchFilters = {};
     const today =
       dayjs().year() +
@@ -48,27 +63,12 @@ export default function TaskList({ title, type }: Props) {
         isDone: false,
       };
     } else if (type === "tag") {
-      searchFilters = { ...searchFilters, project: undefined, tag: title };
+      searchFilters = { ...searchFilters, tag: title };
     } else if (type === "project") {
-      searchFilters = { ...searchFilters, project: title, tag: undefined };
+      searchFilters = { ...searchFilters, project: title };
     }
     return searchFilters;
-  }, [type, title]);
-  const [filters, setFilters] = useState<
-    Omit<TaskFilterPayload, "userID"> | undefined
-  >(searchFilters);
-  const [isMenuShown, setIsMenuShown] = useState(false);
-  const [task, setTask] = useState<Task>({
-    id: "",
-    userID: "",
-    title: "",
-    description: "",
-    time: "",
-    project: "",
-    tags: "",
-    isDone: false,
-    date: "",
-  });
+  };
   const [user] = useSessionStorage("user", INITIAL_USER_VALUE);
   const {
     data: tasks,
@@ -183,9 +183,11 @@ export default function TaskList({ title, type }: Props) {
     openTaskDetailModal();
   };
   const handleSearch = () => {
-    if (search !== "") setFilters({ ...filters, title: search });
-    else setFilters({ ...filters, title: undefined });
+    setFilters({ ...filters, title: search });
   };
+  useEffect(() => {
+    setFilters(setSearchFilters());
+  }, [type, title]);
   return (
     <>
       {(isPending || taskIsLoading) && <LoadingPage />}
@@ -194,52 +196,54 @@ export default function TaskList({ title, type }: Props) {
         <TaskDetailModal selectedTask={task} onConfirm={handleUpdateTask} />
         <AddTaskModal onConfirm={handleAddTask} />
         <Header isMenuShown={isMenuShown} setIsMenuShown={setIsMenuShown} />
-        <div className="w-full px-[60px] py-[15px]">
-          <div className="flex justify-between">
-            <h2 className="!mb-[40px] !ml-[8px] !font-black">{title}</h2>
-            <div className="flex items-start">
-              <input
-                className="h-[40px] w-[300px] rounded-tl-[25px] rounded-bl-[25px] border-[.5px] border-[#b1b1b1] px-[15px] py-[8px] focus:border-[#4a8fc1] focus:outline-none"
-                type="text"
-                name="title"
-                id="search-text"
-                placeholder="Search"
-                value={search}
-                onChange={(e) => setSearch(e.target.value)}
-              />
-              <button
-                className="!border-l-none h-[40px] w-[60px] !rounded-tr-[25px] !rounded-br-[25px] !border-[.5px] !border-[#b1b1b1] bg-[#f1f1f1] bg-[url('@/assets/images/search-btn.png')] bg-center bg-no-repeat hover:!bg-[#e9e9e9] hover:shadow-2xs"
-                onClick={handleSearch}
-              />
+        <div className="w-full lg:flex">
+          <div className="px-[30px] py-[15px] lg:w-2/3 lg:px-[60px]">
+            <div className="flex justify-between">
+              <h2 className="!mb-[40px] !ml-[8px] !font-black">{title}</h2>
+              <div className="flex items-start">
+                <input
+                  className="h-[40px] w-[200px] rounded-tl-[25px] rounded-bl-[25px] border-[.5px] border-[#b1b1b1] px-[15px] py-[8px] focus:border-[#4a8fc1] focus:outline-none lg:w-[300px]"
+                  type="text"
+                  name="title"
+                  id="search-text"
+                  placeholder="Search"
+                  value={search}
+                  onChange={(e) => setSearch(e.target.value)}
+                />
+                <button
+                  className="!border-l-none h-[40px] w-[60px] !rounded-tr-[25px] !rounded-br-[25px] !border-[.5px] !border-[#b1b1b1] bg-[#f1f1f1] bg-[url('@/assets/images/search-btn.png')] bg-center bg-no-repeat hover:!bg-[#e9e9e9] hover:shadow-2xs"
+                  onClick={handleSearch}
+                />
+              </div>
             </div>
+            {!(type === "project" || type === "tag") && (
+              <div
+                className="mb-[10px] ml-[8px] rounded-[10px] border-2 border-transparent bg-[#e5e5e58e] px-[20px] py-[10px] text-[18px] leading-[30px] font-bold text-[#4d4d4dd1] hover:cursor-pointer hover:!border-[#bbbbbb]"
+                onClick={openAddTaskModal}
+              >
+                + Click here to add tasks
+              </div>
+            )}
+            {tasks && tasks.length > 0 ? (
+              <div className="h-[80vh] overflow-x-hidden overflow-y-scroll p-[8px]">
+                {tasks.map((task) => {
+                  return (
+                    <TaskCard
+                      key={task.id}
+                      task={task}
+                      handleUpdateState={handleUpdateState}
+                      handleClick={handleTaskClick}
+                      handleDelete={handleOpenDeleteConfirmModal}
+                    />
+                  );
+                })}
+              </div>
+            ) : (
+              <EmptyPage />
+            )}
           </div>
-          {!(type === "project" || type === "tag") && (
-            <div
-              className="mb-[10px] ml-[8px] rounded-[10px] border-2 border-transparent bg-[#e5e5e58e] px-[20px] py-[10px] text-[18px] leading-[30px] font-bold text-[#4d4d4dd1] hover:cursor-pointer hover:!border-[#bbbbbb]"
-              onClick={openAddTaskModal}
-            >
-              + Click here to add tasks
-            </div>
-          )}
-          {tasks && tasks.length > 0 ? (
-            <div className="h-[80vh] overflow-x-hidden overflow-y-scroll p-[8px]">
-              {tasks.map((task) => {
-                return (
-                  <TaskCard
-                    key={task.id}
-                    task={task}
-                    handleUpdateState={handleUpdateState}
-                    handleClick={handleTaskClick}
-                    handleDelete={handleOpenDeleteConfirmModal}
-                  />
-                );
-              })}
-            </div>
-          ) : (
-            <EmptyPage />
-          )}
+          {title === "Today" && tasks && <Calendar tasks={tasks} />}
         </div>
-        {title === "Today" && tasks && <Calendar tasks={tasks} />}
       </div>
     </>
   );

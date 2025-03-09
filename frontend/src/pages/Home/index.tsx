@@ -1,22 +1,15 @@
-import React, { MouseEvent, useEffect, useRef, useState } from "react";
+import React, { MouseEvent, useEffect, useState } from "react";
 import Header from "@/components/Common/Header";
 import { Button } from "react-bootstrap";
 import { Link } from "react-router-dom";
 import Footer from "@/components/Common/Footer";
 import IMAGES from "@/assets/images/images";
 import { FUNCTIONALITIES } from "@/utils/storage_const";
-import { useGSAP } from "@gsap/react";
-import gsap from "gsap";
-import { ScrollTrigger } from "gsap/ScrollTrigger";
-
-gsap.registerPlugin(useGSAP, ScrollTrigger);
 
 function Home() {
   const [scrollY, setScrollY] = useState(0);
   const [image, setImage] = useState("");
   const [active, setActive] = useState("first");
-  const main = useRef<HTMLDivElement | null>(null);
-  const container = useRef<HTMLDivElement | null>(null);
   const handleScroll = () => {
     setScrollY(window.scrollY);
   };
@@ -27,16 +20,16 @@ function Home() {
   const [margin, setMargin] = useState(250);
   useEffect(() => {
     handleScroll();
-    if (scrollY >= 2200) {
+    if (scrollY >= 2000) {
       setImage(IMAGES.screenshot1);
     }
-    if (scrollY < 1700) {
+    if (scrollY < 1500) {
       setImage(IMAGES.screenshot2);
     }
-    if (scrollY >= 1700 && scrollY < 2200) {
+    if (scrollY >= 1500 && scrollY < 2000) {
       setImage(IMAGES.screenshot3);
     }
-    if (scrollY <= 2800) {
+    if (scrollY <= 2500) {
       setActive("first");
     }
     if (scrollY >= 200 && scrollY < 300) {
@@ -52,19 +45,6 @@ function Home() {
     };
   }, [window.scrollY]);
 
-  useGSAP(
-    () => {
-      ScrollTrigger.create({
-        trigger: container.current,
-        pin: true,
-        start: "top top",
-        end: "+=400",
-        markers: true,
-      });
-    },
-    { scope: main },
-  );
-
   const handleBulletPosition = () => {
     if (active === "second") {
       return "33%";
@@ -78,18 +58,20 @@ function Home() {
   };
   const bullet =
     "w-[15px] h-[15px] bg-white border-3 border-[#b8b8b8] rounded-full absolute left-[calc(50%-6px)] z-2 cursor-grab";
-  const active_bullet =
+  const activeBullet =
     "bg-[url('@/assets/images/arrow-down-up.svg')] bg-no-repeat bg-center animate-(--animate-scale) w-[40px] h-[40px] invert-[1] !bg-[#1effda] border-none left-[calc(50%-18px)]";
+  const listStyle =
+    "before:content-[url('@/assets/images/check-mark.png')] before:inline-block before:w-[20px] before:h-[20px] before:mr-[2px] mb-[10px] animate-(--animate-fadeIn) text-start";
   return (
     <>
       <Header />
-      <div className="h-fit bg-[#F9F2ED]" ref={main}>
+      <div className="h-fit bg-[#F9F2ED]">
         <div className="relative z-1 w-screen bg-[#F9F2ED] pt-[50px] text-center">
           <div className="col-sm-6 mx-auto">
-            <h1 className="!text-[64px] !font-bold">
+            <h1 className="!mb-[30px] !text-[40px] !font-bold lg:!mb-[10px] lg:!text-[64px]">
               Organize your work and life, finally.
             </h1>
-            <p className="text-secondary text-[20px] font-bold">
+            <p className="text-secondary text-lg font-bold lg:text-xl">
               Become focused, organized, and calm with TodoList. The world’s #1
               task manager and to-do list app.
             </p>
@@ -117,40 +99,40 @@ function Home() {
           </div>
           <div className="row">
             <div className="col-sm-6">
-              <div className="col-sm-8 mx-auto mt-[300px] text-start">
-                <p className="text-bold mb-[30px] text-red-500">
+              <div className="col-sm-8 mx-auto mt-[250px] text-start lg:mt-[300px]">
+                <p className="text-bold mb-[30px] text-sm text-red-500 lg:text-base">
                   Clear your mind
                 </p>
-                <h2 className="mb-[30px] !text-[36px] !font-bold">
+                <h2 className="mb-[30px] !text-[28px] !font-bold lg:!text-4xl">
                   The fastest way to get tasks out of your head.
                 </h2>
-                <h3 className="text-secondary !text-[20px] !leading-[30px]">
+                <h3 className="text-secondary !text-lg !leading-[30px] lg:!text-xl">
                   Type just about anything into the task field and TodoList’s
                   one-of-its-kind natural language recognition will instantly
                   fill your to-do list.
                 </h3>
               </div>
-              <div className="col-sm-8 mx-auto mt-[300px] text-start">
-                <p className="text-bold mb-[30px] text-red-500">
+              <div className="col-sm-8 mx-auto mt-[250px] text-start lg:mt-[300px]">
+                <p className="text-bold mb-[30px] text-sm text-red-500 lg:text-base">
                   Focus on what’s important
                 </p>
-                <h2 className="mb-[30px] !text-[36px] !font-bold">
+                <h2 className="mb-[30px] !text-[28px] !font-bold lg:!text-4xl">
                   Reach that mental clarity you’ve been longing for.
                 </h2>
-                <h3 className="text-secondary !text-[20px] !leading-[30px]">
+                <h3 className="text-secondary !text-lg !leading-[30px] lg:!text-xl">
                   Your tasks are automatically sorted into Today, Upcoming, and
                   custom Filter views to help you prioritize your most important
                   work.
                 </h3>
               </div>
-              <div className="col-sm-8 mx-auto mt-[300px] mb-[200px] text-start">
-                <p className="text-bold mb-[30px] text-red-500">
+              <div className="col-sm-8 mx-auto mt-[250px] mb-[100px] text-start lg:mt-[300px]">
+                <p className="text-bold mb-[30px] text-sm text-red-500 lg:text-base">
                   Get it all done
                 </p>
-                <h2 className="mb-[30px] !text-[36px] !font-bold">
+                <h2 className="mb-[30px] !text-[28px] !font-bold lg:!text-4xl">
                   Where work and personal tasks can finally coexist.
                 </h2>
-                <h3 className="text-secondary !text-[20px] !leading-[30px]">
+                <h3 className="text-secondary !text-lg !leading-[30px] lg:!text-xl">
                   Tons of tasks, just one app. With workspaces, your personal,
                   work, and team tasks can all live harmoniously under the same
                   roof. (Sigh of relief).
@@ -161,19 +143,19 @@ function Home() {
               <img
                 src={image}
                 alt=""
-                className="col-sm-10 sticky top-[200px] z-0 mt-[180px] h-[350px] rounded-[20px] bg-black"
+                className="col-sm-10 sticky top-[200px] z-0 mt-[180px] max-h-[550px] rounded-[20px] bg-black"
               />
             </div>
           </div>
-          <div className="col-sm-6 mx-auto mb-[100px]">
-            <h1 className="mb-[50px] !text-[45px] !font-bold">
+          <div className="col-sm-6 mx-auto my-[100px]">
+            <h1 className="mb-[50px] !font-bold lg:!text-[45px]">
               “TodoList makes it easy to go as simple or as complex as you want”
             </h1>
           </div>
           <p className="text-muted mx-auto w-fit rounded-[10px] bg-[#e3e3e3] px-[10px] py-[5px]">
             Simple
           </p>
-          <div className="row items-center justify-center" ref={container}>
+          <div className="row items-center justify-center">
             <img
               src={
                 active === "fourth" || active === "third"
@@ -181,7 +163,7 @@ function Home() {
                   : IMAGES.screenshot2
               }
               alt=""
-              className="col-sm-4 mt-[180px] h-[300px] rounded-[20px] bg-transparent"
+              className="col-sm-4 mt-[180px] max-h-[300px] rounded-[20px] bg-transparent"
             />
             <div className="col-sm-2 relative mx-[60px] h-[400px]">
               <div className="absolute top-0 left-[50%] !z-0 h-full w-[3px] bg-[#b8b8b8]" />
@@ -192,10 +174,8 @@ function Home() {
                 }
               />
               <p
-                className={`absolute mb-0 h-[64px] !w-[80px] bg-transparent bg-[url("@/assets/images/tag.png")] bg-[position:0_-15px] bg-no-repeat pt-[7px] pr-[10px] font-bold text-white opacity-60 ${
-                  active === "fourth"
-                    ? "bottom-0 bg-cover bg-[position:0_7px] pt-[32px]"
-                    : `top-(--tag)`
+                className={`absolute left-[-40px] mb-0 h-[64px] !w-[80px] pt-[7px] font-bold text-black opacity-60 lg:left-0 lg:pl-[20px] ${
+                  active === "fourth" ? "bottom-0 pt-[30px]" : `top-(--tag)`
                 }`}
                 style={
                   { "--tag": handleBulletPosition() } as React.CSSProperties
@@ -211,14 +191,14 @@ function Home() {
               </p>
               <div
                 id="first"
-                className={`${bullet} top-0 ${active === "first" ? active_bullet : "!border-red-500"}`}
+                className={`${bullet} top-0 ${active === "first" ? activeBullet : "!border-red-500"}`}
                 onClick={(e) => handleClick(e)}
               />
               <div
                 id="second"
                 className={`${bullet} top-[33%] ${
                   active === "second"
-                    ? active_bullet
+                    ? activeBullet
                     : active !== "first" && "!border-red-500"
                 } `}
                 onClick={(e) => handleClick(e)}
@@ -227,14 +207,14 @@ function Home() {
                 id="third"
                 className={`${bullet} top-[66%] ${
                   active === "third"
-                    ? active_bullet
+                    ? activeBullet
                     : active === "fourth" && "!border-red-500"
                 }`}
                 onClick={(e) => handleClick(e)}
               />
               <div
                 id="fourth"
-                className={` ${bullet} bottom-0 ${active === "fourth" && active_bullet} `}
+                className={` ${bullet} bottom-0 ${active === "fourth" && activeBullet} `}
                 onClick={(e) => handleClick(e)}
               />
             </div>
@@ -243,10 +223,7 @@ function Home() {
                 {active === "first"
                   ? FUNCTIONALITIES[0].map((func) => {
                       return (
-                        <li
-                          key={func}
-                          className="mb-[10px] animate-(--animate-fadeIn) text-start"
-                        >
+                        <li key={func} className={listStyle}>
                           {func}
                         </li>
                       );
@@ -254,10 +231,7 @@ function Home() {
                   : active === "second"
                     ? FUNCTIONALITIES[1].map((func) => {
                         return (
-                          <li
-                            key={func}
-                            className="mb-[10px] animate-(--animate-fadeIn) text-start"
-                          >
+                          <li key={func} className={listStyle}>
                             {func}
                           </li>
                         );
@@ -265,20 +239,14 @@ function Home() {
                     : active === "third"
                       ? FUNCTIONALITIES[2].map((func) => {
                           return (
-                            <li
-                              key={func}
-                              className="mb-[10px] animate-(--animate-fadeIn) text-start"
-                            >
+                            <li key={func} className={listStyle}>
                               {func}
                             </li>
                           );
                         })
                       : FUNCTIONALITIES[3].map((func) => {
                           return (
-                            <li
-                              key={func}
-                              className="mb-[10px] animate-(--animate-fadeIn) text-start"
-                            >
+                            <li key={func} className={listStyle}>
                               {func}
                             </li>
                           );
