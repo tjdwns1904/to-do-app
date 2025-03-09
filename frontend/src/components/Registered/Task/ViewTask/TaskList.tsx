@@ -197,7 +197,7 @@ export default function TaskList({ title, type }: Props) {
         <AddTaskModal onConfirm={handleAddTask} />
         <Header isMenuShown={isMenuShown} setIsMenuShown={setIsMenuShown} />
         <div className="w-full lg:flex">
-          <div className="px-[30px] py-[15px] lg:w-2/3 lg:px-[60px]">
+          <div className={`px-[30px] py-[15px] ${type === "today" ? "lg:w-2/3" : "w-full"} lg:px-[60px]`}>
             <div className="flex justify-between">
               <h2 className="!mb-[40px] !ml-[8px] !font-black">{title}</h2>
               <div className="flex items-start">
