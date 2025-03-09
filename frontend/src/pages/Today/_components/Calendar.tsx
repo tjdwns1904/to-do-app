@@ -20,7 +20,7 @@ const Calendar = memo(({ tasks }: { tasks: Task[] }) => {
   }, [tasks, setSchedules]);
 
   return (
-    <div className="w-[50%] py-[15px] pr-[30px]">
+    <div className="lg:w-1/3 py-[15px] pr-[30px]">
       <h2 className="!mb-[40px] !ml-[8px] !font-black">Event Calendar</h2>
       <div className="h-[85vh] overflow-y-scroll rounded-[10px] bg-white p-[20px] shadow-sm shadow-[#b0b0b0]">
         {schedules.map(({time, tasks}) => {
