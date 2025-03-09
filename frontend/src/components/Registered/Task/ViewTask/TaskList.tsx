@@ -3,7 +3,7 @@ import LoadingPage from "@/pages/LoadingPage";
 import { Task } from "@/types/common";
 import { INITIAL_USER_VALUE } from "@/utils/storage_const";
 import { useSessionStorage } from "@uidotdev/usehooks";
-import { useMemo, useState } from "react";
+import { useEffect, useState } from "react";
 import AddTask, { AddTaskForm } from "../AddTask/AddTask";
 import useModal from "@/hooks/useModal";
 import { useUpdateTask } from "@/hooks/useUpdateTask";
@@ -28,7 +28,22 @@ interface Props {
 
 export default function TaskList({ title, type }: Props) {
   const [search, setSearch] = useState<string>("");
-  const searchFilters = useMemo(() => {
+  const [filters, setFilters] = useState<
+    Omit<TaskFilterPayload, "userID"> | undefined
+  >();
+  const [isMenuShown, setIsMenuShown] = useState(false);
+  const [task, setTask] = useState<Task>({
+    id: "",
+    userID: "",
+    title: "",
+    description: "",
+    time: "",
+    project: "",
+    tags: "",
+    isDone: false,
+    date: "",
+  });
+  const setSearchFilters = () => {
     let searchFilters = {};
     const today =
       dayjs().year() +
@@ -48,27 +63,12 @@ export default function TaskList({ title, type }: Props) {
         isDone: false,
       };
     } else if (type === "tag") {
-      searchFilters = { ...searchFilters, project: undefined, tag: title };
+      searchFilters = { ...searchFilters, tag: title };
     } else if (type === "project") {
-      searchFilters = { ...searchFilters, project: title, tag: undefined };
+      searchFilters = { ...searchFilters, project: title };
     }
     return searchFilters;
-  }, [type, title]);
-  const [filters, setFilters] = useState<
-    Omit<TaskFilterPayload, "userID"> | undefined
-  >(searchFilters);
-  const [isMenuShown, setIsMenuShown] = useState(false);
-  const [task, setTask] = useState<Task>({
-    id: "",
-    userID: "",
-    title: "",
-    description: "",
-    time: "",
-    project: "",
-    tags: "",
-    isDone: false,
-    date: "",
-  });
+  };
   const [user] = useSessionStorage("user", INITIAL_USER_VALUE);
   const {
     data: tasks,
@@ -183,9 +183,11 @@ export default function TaskList({ title, type }: Props) {
     openTaskDetailModal();
   };
   const handleSearch = () => {
-    if (search !== "") setFilters({ ...filters, title: search });
-    else setFilters({ ...filters, title: undefined });
+    setFilters({ ...filters, title: search });
   };
+  useEffect(() => {
+    setFilters(setSearchFilters());
+  }, [type, title]);
   return (
     <>
       {(isPending || taskIsLoading) && <LoadingPage />}
