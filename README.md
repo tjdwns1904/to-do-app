@@ -40,7 +40,7 @@
 |:---:|
 |<img src="https://github.com/user-attachments/assets/78c6e2a9-eb3f-4124-a1b3-c25cc2f11e30" width="700"/>    
 <img src="https://github.com/user-attachments/assets/5623daef-931d-4e68-af93-d0b3113422a9" width="700"/>|
-|사용자가 자신의 일정을 추가할 수 있는 모달입니다.<br/>일정 이름과 설명, 날짜 및 시간을 입력할 수 있고, 태그 및 프로젝트 또한 지정할 수 있습니다.|
+|사용자가 자신의 일정을 추가할 수 있는 모달입니다.<br/>일정 이름과 설명, 날짜 및 시간을 입력할 수 있고, 생성한 태그 및 프로젝트 또한 지정할 수 있습니다.|
 
 
 |오늘의 일정 조회|
