@@ -1,17 +1,20 @@
-import { Task } from "@/types/common";
-import { TaskFilterPayload } from "@/types/payload";
+import { TaskFilterPayload, TaskListPayload } from "@/types/payload";
 import { kyInstance } from "@/utils/ky"
-import { useQuery, UseQueryOptions } from "@tanstack/react-query";
+import { InfiniteData, useInfiniteQuery, UseInfiniteQueryOptions } from "@tanstack/react-query";
 
 
 export const useGetTasks = (
     filters: TaskFilterPayload,
-    props: UseQueryOptions<Task[], unknown>,
-) => useQuery({
+    props: UseInfiniteQueryOptions<TaskListPayload, unknown, InfiniteData<TaskListPayload>>,
+) => useInfiniteQuery({
     ...props,
-    queryFn: async () => {
-        const data = await kyInstance.get(`tasks`, { searchParams: { ...filters } }).json<Task[]>();
-        const sortedTasks = data.sort((a: Task, b: Task) => a.time.localeCompare(b.time));
-        return sortedTasks;
-    }
+    queryFn: async ({ pageParam = 0 }) => {
+        const data = await kyInstance.get(`tasks`, {
+            searchParams: {
+                ...filters, cursor: pageParam ? Number(pageParam) : 0, limit: 10
+            }
+        }).json<TaskListPayload>();
+        return data;
+    },
+    getNextPageParam: (lastPage) => lastPage.nextCursor,
 });

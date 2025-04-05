@@ -23,11 +23,13 @@ const setQuery = (query) => {
 }
 
 const getTasks = (req, res) => {
-    const { userID } = req.query;
-    let query = setQuery(req.query);
-    db.query(query, [userID], (err, result) => {
+    const { userID, cursor, limit = 10 } = req.query;
+    let query = setQuery(req.query) + `${cursor && ` AND id > ${cursor}`} ORDER BY date ASC, time ASC LIMIT ?`;
+    db.query(query, [userID, Number(limit)], (err, result) => {
         if(err)return res.send({err: err});
-        return res.send(result);
+        const hasNextPage = Number(limit) === result.length;
+        const nextCursor = hasNextPage ? result[result.length - 1].id : null;
+        return res.send({tasks: result, nextCursor , hasNextPage });
     });
 }
 

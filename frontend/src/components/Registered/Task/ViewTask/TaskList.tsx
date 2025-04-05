@@ -3,7 +3,7 @@ import LoadingPage from "@/pages/LoadingPage";
 import { Task } from "@/types/common";
 import { INITIAL_USER_VALUE } from "@/utils/storage_const";
 import { useSessionStorage } from "@uidotdev/usehooks";
-import { useEffect, useState } from "react";
+import { useEffect, useRef, useState } from "react";
 import AddTask, { AddTaskForm } from "../AddTask/AddTask";
 import useModal from "@/hooks/useModal";
 import { useUpdateTask } from "@/hooks/useUpdateTask";
@@ -28,6 +28,7 @@ interface Props {
 
 export default function TaskList({ title, type }: Props) {
   const [search, setSearch] = useState<string>("");
+  const observerRef = useRef(null);
   const [filters, setFilters] = useState<
     Omit<TaskFilterPayload, "userID"> | undefined
   >();
@@ -71,14 +72,19 @@ export default function TaskList({ title, type }: Props) {
   };
   const [user] = useSessionStorage("user", INITIAL_USER_VALUE);
   const {
-    data: tasks,
+    data: taskPage,
     refetch: refetchTasks,
+    fetchNextPage,
+    hasNextPage,
+    isFetchingNextPage,
     isLoading: taskIsLoading,
   } = useGetTasks(
     { userID: user.id, ...filters },
     {
       queryKey: ["tasks", user.id, filters],
       placeholderData: keepPreviousData,
+      getNextPageParam: (lastPage) => lastPage.nextCursor,
+      initialPageParam: 0,
     },
   );
   const { mutate: addTask } = useAddTask({
@@ -188,6 +194,16 @@ export default function TaskList({ title, type }: Props) {
   useEffect(() => {
     setFilters(setSearchFilters());
   }, [type, title]);
+
+  useEffect(() => {
+    const observer = new IntersectionObserver(([entry]) => {
+      if (entry.isIntersecting && hasNextPage && !isFetchingNextPage) {
+        fetchNextPage();
+      }
+    }, {threshold: 1});
+    if (observerRef.current) observer.observe(observerRef.current);
+    return () => observer.disconnect();
+  }, [hasNextPage, isFetchingNextPage, fetchNextPage]);
   return (
     <>
       {(isPending || taskIsLoading) && <LoadingPage />}
@@ -224,25 +240,37 @@ export default function TaskList({ title, type }: Props) {
                 + Click here to add tasks
               </div>
             )}
-            {tasks && tasks.length > 0 ? (
-              <div className="h-[80vh] overflow-x-hidden overflow-y-scroll p-[8px]">
-                {tasks.map((task) => {
-                  return (
-                    <TaskCard
-                      key={task.id}
-                      task={task}
-                      handleUpdateState={handleUpdateState}
-                      handleClick={handleTaskClick}
-                      handleDelete={handleOpenDeleteConfirmModal}
-                    />
-                  );
-                })}
-              </div>
-            ) : (
-              <EmptyPage />
-            )}
+            {taskPage &&
+              taskPage.pages && taskPage.pages.length > 0
+              && taskPage.pages[0].tasks && taskPage.pages[0].tasks.length > 0
+              ?
+              (
+                <>
+                  <div className="h-[80vh] overflow-x-hidden overflow-y-scroll p-[8px]">
+                    {taskPage.pages.flatMap((pages) => pages.tasks).map((task) => {
+                      return (
+                        <TaskCard
+                          key={task.id}
+                          task={task}
+                          handleUpdateState={handleUpdateState}
+                          handleClick={handleTaskClick}
+                          handleDelete={handleOpenDeleteConfirmModal}
+                        />
+                      );
+                    })}
+                  </div>
+                  {hasNextPage && !isFetchingNextPage && (
+                    <div ref={observerRef} onClick={() => fetchNextPage()} className="w-full mx-auto">Load More</div>
+                  )}
+                </>
+              ) : (
+                <EmptyPage />
+              )}
           </div>
-          {title === "Today" && tasks && <Calendar tasks={tasks} />}
+          {title === "Today" && (
+            taskPage && taskPage.pages && taskPage.pages.length > 0 &&
+            taskPage.pages[0].tasks && taskPage.pages[0].tasks.length > 0
+          ) && <Calendar tasks={taskPage.pages.flatMap((pages) => pages.tasks)} />}
         </div>
       </div>
     </>
