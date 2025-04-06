@@ -200,7 +200,9 @@ export default function TaskList({ title, type }: Props) {
       if (entry.isIntersecting && hasNextPage && !isFetchingNextPage) {
         fetchNextPage();
       }
-    }, {threshold: 1});
+    }, {
+      threshold: 1
+    });
     if (observerRef.current) observer.observe(observerRef.current);
     return () => observer.disconnect();
   }, [hasNextPage, isFetchingNextPage, fetchNextPage]);
@@ -245,24 +247,22 @@ export default function TaskList({ title, type }: Props) {
               && taskPage.pages[0].tasks && taskPage.pages[0].tasks.length > 0
               ?
               (
-                <>
-                  <div className="h-[80vh] overflow-x-hidden overflow-y-scroll p-[8px]">
-                    {taskPage.pages.flatMap((pages) => pages.tasks).map((task) => {
-                      return (
-                        <TaskCard
-                          key={task.id}
-                          task={task}
-                          handleUpdateState={handleUpdateState}
-                          handleClick={handleTaskClick}
-                          handleDelete={handleOpenDeleteConfirmModal}
-                        />
-                      );
-                    })}
-                  </div>
+                <div className="h-[80vh] overflow-x-hidden overflow-y-scroll p-[8px]">
+                  {taskPage.pages.flatMap((pages) => pages.tasks).map((task) => {
+                    return (
+                      <TaskCard
+                        key={task.id}
+                        task={task}
+                        handleUpdateState={handleUpdateState}
+                        handleClick={handleTaskClick}
+                        handleDelete={handleOpenDeleteConfirmModal}
+                      />
+                    );
+                  })}
                   {hasNextPage && !isFetchingNextPage && (
-                    <div ref={observerRef} onClick={() => fetchNextPage()} className="w-full mx-auto">Load More</div>
+                    <div ref={observerRef} className="h-[1px]" />
                   )}
-                </>
+                </div>
               ) : (
                 <EmptyPage />
               )}

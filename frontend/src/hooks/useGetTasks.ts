@@ -11,7 +11,7 @@ export const useGetTasks = (
     queryFn: async ({ pageParam = 0 }) => {
         const data = await kyInstance.get(`tasks`, {
             searchParams: {
-                ...filters, cursor: pageParam ? Number(pageParam) : 0, limit: 10
+                ...filters, cursor: pageParam ? Number(pageParam) : 0, limit: 30
             }
         }).json<TaskListPayload>();
         return data;
