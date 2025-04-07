@@ -196,13 +196,16 @@ export default function TaskList({ title, type }: Props) {
   }, [type, title]);
 
   useEffect(() => {
-    const observer = new IntersectionObserver(([entry]) => {
-      if (entry.isIntersecting && hasNextPage && !isFetchingNextPage) {
-        fetchNextPage();
-      }
-    }, {
-      threshold: 1
-    });
+    const observer = new IntersectionObserver(
+      ([entry]) => {
+        if (entry.isIntersecting && hasNextPage && !isFetchingNextPage) {
+          fetchNextPage();
+        }
+      },
+      {
+        threshold: 1,
+      },
+    );
     if (observerRef.current) observer.observe(observerRef.current);
     return () => observer.disconnect();
   }, [hasNextPage, isFetchingNextPage, fetchNextPage]);
@@ -215,7 +218,9 @@ export default function TaskList({ title, type }: Props) {
         <AddTaskModal onConfirm={handleAddTask} />
         <Header isMenuShown={isMenuShown} setIsMenuShown={setIsMenuShown} />
         <div className="w-full lg:flex">
-          <div className={`px-[30px] py-[15px] ${type === "today" ? "lg:w-2/3" : "w-full"} lg:px-[60px]`}>
+          <div
+            className={`px-[30px] py-[15px] ${type === "today" ? "lg:w-2/3" : "w-full"} lg:px-[60px]`}
+          >
             <div className="flex justify-between">
               <h2 className="!mb-[40px] !ml-[8px] !font-black">{title}</h2>
               <div className="flex items-start">
@@ -243,12 +248,14 @@ export default function TaskList({ title, type }: Props) {
               </div>
             )}
             {taskPage &&
-              taskPage.pages && taskPage.pages.length > 0
-              && taskPage.pages[0].tasks && taskPage.pages[0].tasks.length > 0
-              ?
-              (
-                <div className="h-[80vh] overflow-x-hidden overflow-y-scroll p-[8px]">
-                  {taskPage.pages.flatMap((pages) => pages.tasks).map((task) => {
+            taskPage.pages &&
+            taskPage.pages.length > 0 &&
+            taskPage.pages[0].tasks &&
+            taskPage.pages[0].tasks.length > 0 ? (
+              <div className="h-[80vh] overflow-x-hidden overflow-y-scroll p-[8px]">
+                {taskPage.pages
+                  .flatMap((pages) => pages.tasks)
+                  .map((task) => {
                     return (
                       <TaskCard
                         key={task.id}
@@ -259,18 +266,24 @@ export default function TaskList({ title, type }: Props) {
                       />
                     );
                   })}
-                  {hasNextPage && !isFetchingNextPage && (
-                    <div ref={observerRef} className="h-[1px]" />
-                  )}
-                </div>
-              ) : (
-                <EmptyPage />
-              )}
+                {hasNextPage && !isFetchingNextPage && (
+                  <div ref={observerRef} className="h-[1px]" />
+                )}
+              </div>
+            ) : (
+              <EmptyPage />
+            )}
           </div>
-          {title === "Today" && (
-            taskPage && taskPage.pages && taskPage.pages.length > 0 &&
-            taskPage.pages[0].tasks && taskPage.pages[0].tasks.length > 0
-          ) && <Calendar tasks={taskPage.pages.flatMap((pages) => pages.tasks)} />}
+          {title === "Today" &&
+            taskPage &&
+            taskPage.pages &&
+            taskPage.pages.length > 0 &&
+            taskPage.pages[0].tasks &&
+            taskPage.pages[0].tasks.length > 0 && (
+              <Calendar
+                tasks={taskPage.pages.flatMap((pages) => pages.tasks)}
+              />
+            )}
         </div>
       </div>
     </>
