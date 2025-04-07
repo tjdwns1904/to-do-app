@@ -3,7 +3,7 @@
 <!-- logo -->
 # TODOLIST <img src="https://github.com/tjdwns1904/to-do-app/blob/main/frontend/src/assets/images/logo.jpg" width="35"/>
 
-[<img src="https://img.shields.io/badge/프로젝트 기간-2023.08.31~2023.11.15 & 2025.02.25~2025.03.16-blue?style=flat&logo=&logoColor=white" />]()
+[<img src="https://img.shields.io/badge/프로젝트 기간-2023.08.31~2023.11.15 & 2025.02.25~현재-blue?style=flat&logo=&logoColor=white" />]()
 
 </div> 
 
