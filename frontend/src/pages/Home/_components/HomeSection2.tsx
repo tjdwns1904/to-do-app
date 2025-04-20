@@ -45,7 +45,7 @@ function HomeSection2({ image }: { image: string }) {
         <img
           src={image}
           alt=""
-          className="col-sm-10 sticky top-[200px] z-0 mt-[180px] max-h-[550px] rounded-[20px] bg-black"
+          className="col-sm-10 sticky top-[200px] z-0 mt-[180px] aspect-6/4 max-h-[550px] rounded-[20px] bg-black"
         />
       </div>
     </>

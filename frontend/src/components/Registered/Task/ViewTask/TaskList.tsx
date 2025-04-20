@@ -219,7 +219,16 @@ export default function TaskList({ title, type }: Props) {
         <Header isMenuShown={isMenuShown} setIsMenuShown={setIsMenuShown} />
         <div className="w-full lg:flex">
           <div
-            className={`px-[30px] py-[15px] ${type === "today" ? "lg:w-2/3" : "w-full"} lg:px-[60px]`}
+            className={`px-[30px] py-[15px] ${
+              type === "today" &&
+              taskPage &&
+              taskPage.pages &&
+              taskPage.pages.length > 0 &&
+              taskPage.pages[0].tasks &&
+              taskPage.pages[0].tasks.length > 0
+                ? "lg:w-2/3"
+                : "w-full"
+            } lg:px-[60px]`}
           >
             <div className="flex justify-between">
               <h2 className="!mb-[40px] !ml-[8px] !font-black">{title}</h2>

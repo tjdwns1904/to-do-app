@@ -28,8 +28,8 @@ function HomeSection3({ active, handleClick }: Props) {
 
   return (
     <div>
-      <div className="col-sm-6 mx-auto">
-        <h1 className="mb-[50px] !font-bold lg:!text-[45px]">
+      <div className="col-sm-6 mx-auto mb-[50px]">
+        <h1 className="!font-bold lg:!text-[45px]">
           “TodoList makes it easy to go as simple or as complex as you want”
         </h1>
       </div>
@@ -55,7 +55,7 @@ function HomeSection3({ active, handleClick }: Props) {
             }
           />
           <p
-            className={`absolute left-[-40px] mb-0 h-[64px] !w-[80px] pt-[7px] font-bold text-black opacity-60 lg:left-[-10px] xl:pl-[40px] ${
+            className={`absolute left-[-30px] mb-0 h-[64px] !w-[80px] pt-[7px] font-bold text-black opacity-60 lg:left-[-10px] xl:left-[25px] ${
               active === "fourth" ? "bottom-0 pt-[30px]" : `top-(--tag)`
             }`}
             style={{ "--tag": handleBulletPosition() } as React.CSSProperties}
