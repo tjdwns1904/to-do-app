@@ -5,12 +5,16 @@ import { Link } from "react-router-dom";
 import Footer from "@/components/Common/Footer";
 import IMAGES from "@/assets/images/images";
 import LazyComponent from "@/components/Common/LazyComponent";
+import HomeSection2Skeleton from "./_components/HomeSection2Skeleton";
+import HomeSection3Skeleton from "./_components/HomeSection3Skeleton";
+import Skeleton from "react-loading-skeleton";
 
 function Home() {
   const [scrollY, setScrollY] = useState(0);
   const [image, setImage] = useState("");
   const [active, setActive] = useState("first");
   const [margin, setMargin] = useState(250);
+  const [loaded, setLoaded] = useState(false);
   const handleScroll = () => {
     setScrollY(window.scrollY);
   };
@@ -19,27 +23,28 @@ function Home() {
     setActive(e.currentTarget.id);
   };
 
+  const updateMargin = () => {
+    const scrollTop = window.scrollY;
+    let newMargin = Math.max(250 - scrollTop * 0.5, 0);
+    setMargin(newMargin);
+    requestAnimationFrame(updateMargin);
+  };
+
   useEffect(() => {
     handleScroll();
-    if (scrollY >= 2000) {
-      setImage(IMAGES.screenshot1);
-    }
-    if (scrollY < 1500) {
+    if (scrollY < 1600) {
       setImage(IMAGES.screenshot2);
     }
-    if (scrollY >= 1500 && scrollY < 2000) {
+    if (scrollY >= 1600 && scrollY < 2100) {
       setImage(IMAGES.screenshot3);
+    }
+    if (scrollY >= 2100) {
+      setImage(IMAGES.screenshot1);
     }
     if (scrollY <= 2500) {
       setActive("first");
     }
-    if (scrollY >= 200 && scrollY < 300) {
-      setMargin(50);
-    } else if (scrollY >= 300) {
-      setMargin(0);
-    } else {
-      setMargin(250);
-    }
+    requestAnimationFrame(updateMargin);
     window.addEventListener("scroll", handleScroll);
     return () => {
       window.removeEventListener("scroll", handleScroll);
@@ -68,11 +73,20 @@ function Home() {
           <img
             src={IMAGES.screenshot1}
             alt=""
-            className="relative z-0 mx-auto mt-(--margin) w-[1200px] translate-y-[40px] rounded-[10px]"
+            decoding="async"
+            loading="eager"
+            onLoad={() => setLoaded(true)}
+            className={`relative z-0 mx-auto mt-(--margin) w-[1200px] translate-y-[40px] rounded-[10px] ${loaded ? "block" : "none"}`}
             style={{ "--margin": margin + "px" } as React.CSSProperties}
           />
+          {!loaded && (
+            <Skeleton
+              className="relative z-0 mx-auto mt-(--margin) w-[1200px] translate-y-[40px] rounded-[10px] bg-black"
+              style={{ "--margin": margin + "px" } as React.CSSProperties}
+            />
+          )}
         </div>
-        <div className="border-top border-bottom relative z-1 w-screen border-y-[#d1d1d1] bg-[#F9F2ED] py-[50px] text-center">
+        <div className="border-top border-bottom relative z-1 w-screen border-y-[#d1d1d1] bg-[#F9F2ED] py-[100px] text-center">
           <p>
             30 million+ people and teams trust their sanity and productivity to
             TodoList
@@ -83,14 +97,14 @@ function Home() {
           </div>
           <LazyComponent
             component={() => import("./_components/HomeSection2")}
-            skeleton={<></>}
+            skeleton={<HomeSection2Skeleton />}
             height={1684}
             margin={250}
             props={{ image }}
           />
           <LazyComponent
             component={() => import("./_components/HomeSection3")}
-            skeleton={<></>}
+            skeleton={<HomeSection3Skeleton />}
             height={670}
             props={{ active, handleClick }}
           />
