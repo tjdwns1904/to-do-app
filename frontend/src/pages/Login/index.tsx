@@ -17,7 +17,7 @@ const EMAIL_FORMAT = /^\w+([\.-]?\w+)*@\w+([\.-]?\w+)*(\.\w{2,3})+$/;
 
 const schema = z.object({
   email: z.string().regex(EMAIL_FORMAT, "Please enter a valid email"),
-  password: z.string().min(1, "Please enter a valid password"),
+  password: z.string().min(8, "Please enter a valid password"),
 });
 
 export type LoginForm = z.infer<typeof schema>;

@@ -1,3 +1,11 @@
+import { Task } from "./common";
+
+export interface TaskListPayload{
+    tasks: Task[];
+    nextCursor?: number;
+    hasNextPage: boolean;
+}
+
 export interface TaskPayload{
     userID: string;
     title: string;
